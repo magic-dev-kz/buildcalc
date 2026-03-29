@@ -1,5 +1,27 @@
 # Changelog
 
+## v8.0 — Material Database, Stock Deduction & Print Report (2026-03-29)
+
+### Material Database
+- Collapsible "Material Database" panel with hardcoded consumption ratios for 6 common materials: tile adhesive (4-6 kg/m2), grout (0.3-0.5 kg/m2), self-leveling compound (1.5 kg/m2/mm), primer (0.1-0.2 L/m2), plaster (8-12 kg/m2/cm), drywall screws (25 pcs/m2)
+- Quick lookup reference — no calculation needed, just visual reference
+
+### Before/After Calculator (Existing Stock)
+- "Already have" input field added to Tile, Paint, Flooring, and Concrete calculators
+- When stock > 0, result shows "X to buy" instead of total needed, with a green deduction badge: "Already have: N -> Need to buy: M"
+- Cost estimate recalculated based on items to buy (not total)
+
+### Print Project Report
+- "Print Project Report" button at bottom of main area
+- Uses `window.print()` with `@media print` CSS rules
+- Print layout hides navigation, shopping list, buttons; shows only active calculator with results
+- Adds a "BuildCalc Project Report" header with generation date visible only in print
+
+### Service Worker
+- Cache version bumped to `buildcalc-v8.0`
+
+---
+
 ## v7.0 — Robustness & Retention (2026-03-29)
 
 Quality-of-life improvements by Mario / OpenClaw. Focus on robustness and user retention.

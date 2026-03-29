@@ -348,6 +348,50 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
 .confirm-ok:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(212,98,26,0.35)}
 .confirm-ok:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
+/* v8: MATERIAL DATABASE */
+.material-lookup{margin-bottom:24px}
+.material-lookup-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--bg-card);border:1.5px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all var(--transition);user-select:none;box-shadow:var(--shadow)}
+.material-lookup-header:hover{border-color:var(--accent);box-shadow:var(--shadow-lg);transform:translateY(-1px)}
+.material-lookup-header h2{font-size:0.92rem;font-weight:800;display:flex;align-items:center;gap:8px;color:var(--text-secondary)}
+.material-lookup-header .chevron{transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);color:var(--text-muted)}
+.material-lookup.open .material-lookup-header .chevron{transform:rotate(180deg)}
+.material-lookup-body{display:none;background:var(--bg-card);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:18px 22px;animation:fadeIn 0.25s ease}
+.material-lookup.open .material-lookup-body{display:block}
+.material-item{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);font-size:0.9rem}
+.material-item:last-child{border-bottom:none}
+.material-name{font-weight:700;color:var(--text);flex:1}
+.material-ratio{font-weight:600;color:var(--accent);white-space:nowrap;margin-left:12px}
+
+/* v8: EXISTING STOCK */
+.existing-stock-group{margin-top:4px;margin-bottom:18px}
+.existing-stock-group .form-label{color:var(--success)}
+.stock-deduction{display:inline-block;padding:3px 10px;background:var(--success-light);border:1px solid var(--success);border-radius:8px;font-size:0.82rem;font-weight:700;color:var(--success);margin-top:4px}
+
+/* v8: PRINT REPORT */
+.btn-print-report{margin-top:12px;height:44px;padding:0 18px;font-size:0.85rem;background:var(--bg-input);color:var(--text-secondary);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-weight:700;width:100%;transition:all var(--transition)}
+.btn-print-report:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);transform:translateY(-1px)}
+.btn-print-report:active{transform:translateY(0)}
+.btn-print-report:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+@media print{
+  body>*:not(.main):not(.header),
+  .header,.nav,.measure-guide,.shopping-section,
+  .save-form,.btn-primary,.btn-clear-form,.btn-add-shopping,.btn-print-report,
+  .history-section,.onboarding,.projects-panel,.pwa-banner,.footer,.oc-footer,
+  .nav-tab,.toast,.skip-link{display:none!important}
+  .calc-section{display:block!important;animation:none!important}
+  .calc-section:not(.active){display:none!important}
+  .main{max-width:100%;padding:0}
+  .card{box-shadow:none;border:1px solid #ccc;break-inside:avoid}
+  .result{display:block!important;border:1px solid #1D8C52;background:#E6F7ED!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .cost-estimate{display:block!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  @page{margin:1.5cm;size:auto}
+  .print-report-header{display:block!important;text-align:center;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid #D4621A}
+  .print-report-header h1{font-size:1.5rem;font-weight:900;color:#D4621A}
+  .print-report-header p{font-size:0.9rem;color:#666;margin-top:4px}
+}
+.print-report-header{display:none}
+
 /* REDUCED MOTION */
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important}
@@ -412,6 +456,28 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
     <button class="nav-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="concrete" id="tab-concrete" aria-controls="section-concrete"><span class="tab-icon" aria-hidden="true">&#x1F9F1;</span> Concrete<span class="kbd-hint">5</span></button>
     <button class="nav-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="convert" id="tab-convert" aria-controls="section-convert"><span class="tab-icon" aria-hidden="true">&#x1F504;</span> Convert<span class="kbd-hint">6</span></button>
   </nav>
+
+  <!-- v8: PRINT REPORT HEADER (visible only when printing) -->
+  <div class="print-report-header" id="print-report-header">
+    <h1>BuildCalc Project Report</h1>
+    <p id="print-report-date"></p>
+  </div>
+
+  <!-- v8: MATERIAL DATABASE -->
+  <div class="material-lookup" id="material-lookup">
+    <div class="material-lookup-header" id="material-lookup-toggle" role="button" tabindex="0">
+      <h2>&#x1F4D6; Material Database</h2>
+      <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="material-lookup-body">
+      <div class="material-item"><span class="material-name">Tile adhesive / glue</span><span class="material-ratio">4-6 kg/m&sup2;</span></div>
+      <div class="material-item"><span class="material-name">Grout (floor tiles)</span><span class="material-ratio">0.3-0.5 kg/m&sup2;</span></div>
+      <div class="material-item"><span class="material-name">Self-leveling compound</span><span class="material-ratio">1.5 kg/m&sup2; per mm</span></div>
+      <div class="material-item"><span class="material-name">Primer / sealer</span><span class="material-ratio">0.1-0.2 L/m&sup2;</span></div>
+      <div class="material-item"><span class="material-name">Plaster (wall)</span><span class="material-ratio">8-12 kg/m&sup2; per cm</span></div>
+      <div class="material-item"><span class="material-name">Drywall screws</span><span class="material-ratio">25 pcs/m&sup2;</span></div>
+    </div>
+  </div>
 
   <!-- HOW TO MEASURE GUIDE -->
   <div class="measure-guide" id="measure-guide">
@@ -561,6 +627,10 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
         <label class="form-label" for="tile-price">Price per tile (optional)</label>
         <input class="form-input" type="number" id="tile-price" placeholder="e.g. 2.50" min="0" step="0.01" inputmode="decimal">
       </div>
+      <div class="existing-stock-group">
+        <label class="form-label" for="tile-stock">Already have (tiles in stock)</label>
+        <input class="form-input" type="number" id="tile-stock" placeholder="e.g. 20" min="0" step="1" inputmode="numeric" value="0">
+      </div>
       <button class="btn btn-primary" id="calc-tile">Calculate Tiles</button>
       <button class="btn-clear-form" data-clear-section="tile" type="button">Clear Form</button>
       <div class="result" id="result-tile" aria-live="polite">
@@ -633,6 +703,10 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
         <label class="form-label" for="paint-price">Price per can (optional)</label>
         <input class="form-input" type="number" id="paint-price" placeholder="e.g. 25.00" min="0" step="0.01" inputmode="decimal">
       </div>
+      <div class="existing-stock-group">
+        <label class="form-label" for="paint-stock">Already have (cans in stock)</label>
+        <input class="form-input" type="number" id="paint-stock" placeholder="e.g. 1" min="0" step="1" inputmode="numeric" value="0">
+      </div>
       <button class="btn btn-primary" id="calc-paint">Calculate Paint</button>
       <button class="btn-clear-form" data-clear-section="paint" type="button">Clear Form</button>
       <div class="result" id="result-paint" aria-live="polite">
@@ -700,6 +774,10 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
       <div class="price-group">
         <label class="form-label" for="floor-price">Price per pack (optional)</label>
         <input class="form-input" type="number" id="floor-price" placeholder="e.g. 18.00" min="0" step="0.01" inputmode="decimal">
+      </div>
+      <div class="existing-stock-group">
+        <label class="form-label" for="floor-stock">Already have (packs in stock)</label>
+        <input class="form-input" type="number" id="floor-stock" placeholder="e.g. 2" min="0" step="1" inputmode="numeric" value="0">
       </div>
       <button class="btn btn-primary" id="calc-floor">Calculate Packs</button>
       <button class="btn-clear-form" data-clear-section="floor" type="button">Clear Form</button>
@@ -776,6 +854,10 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
         <label class="form-label" for="conc-price">Price per bag (optional)</label>
         <input class="form-input" type="number" id="conc-price" placeholder="e.g. 6.50" min="0" step="0.01" inputmode="decimal">
       </div>
+      <div class="existing-stock-group">
+        <label class="form-label" for="conc-stock">Already have (bags in stock)</label>
+        <input class="form-input" type="number" id="conc-stock" placeholder="e.g. 5" min="0" step="1" inputmode="numeric" value="0">
+      </div>
       <button class="btn btn-primary" id="calc-concrete">Calculate Concrete</button>
       <button class="btn-clear-form" data-clear-section="concrete" type="button">Clear Form</button>
       <div class="result" id="result-concrete" aria-live="polite">
@@ -834,6 +916,9 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
     </div>
     <div id="history-list"></div>
   </div>
+
+  <!-- v8: Print Report Button -->
+  <button class="btn-print-report" id="btn-print-report" type="button">&#x1F5A8; Print Project Report</button>
 
 </main>
 
@@ -1190,14 +1275,19 @@ function calcTile(){
   var tileArea=(tl/100)*(tw/100);
   var tilesExact=roomAreaM/tileArea;
   var tilesWithWaste=Math.ceil(tilesExact*(1+waste/100));
-  lastTileResult={tiles:tilesWithWaste,tl:tl,tw:tw,roomAreaM:round(roomAreaM),waste:waste};
+  // v8: Existing stock deduction
+  var tileStock=getNum('tile-stock');if(tileStock===null||tileStock<0)tileStock=0;
+  var tilesToBuy=Math.max(0,tilesWithWaste-Math.floor(tileStock));
+  lastTileResult={tiles:tilesWithWaste,tilesToBuy:tilesToBuy,tl:tl,tw:tw,roomAreaM:round(roomAreaM),waste:waste,stock:Math.floor(tileStock)};
+  var stockNote=tileStock>0?'<span class="stock-deduction">Already have: '+escapeHtml(Math.floor(tileStock))+' tiles \u2192 Need to buy: '+escapeHtml(tilesToBuy)+' tiles</span>':'';
   showResult('result-tile',
-    escapeHtml(tilesWithWaste)+' tiles',
+    escapeHtml(tileStock>0?tilesToBuy:tilesWithWaste)+' tiles'+(tileStock>0?' to buy':''),
     '<span>Room area: '+escapeHtml(round(roomAreaM))+' m\u00B2</span>'+
     '<span>Tile size: '+escapeHtml(tl)+' \u00D7 '+escapeHtml(tw)+' cm ('+escapeHtml(round(tileArea,4))+' m\u00B2 each)</span>'+
-    '<span>Without waste: '+escapeHtml(Math.ceil(tilesExact))+' tiles | With '+escapeHtml(waste)+'% waste: '+escapeHtml(tilesWithWaste)+' tiles</span>'
+    '<span>Without waste: '+escapeHtml(Math.ceil(tilesExact))+' tiles | With '+escapeHtml(waste)+'% waste: '+escapeHtml(tilesWithWaste)+' tiles</span>'+
+    stockNote
   );
-  showCost('tile',tilesWithWaste,'tile-price');
+  showCost('tile',tileStock>0?tilesToBuy:tilesWithWaste,'tile-price');
   addHistory({calculator_type:'tile',inputs_summary:rl+'x'+rw+' '+unitLabel(unit)+', tile '+tl+'x'+tw+'cm',result:tilesWithWaste+' tiles',fields:{'tile-area-l':rl,'tile-area-w':rw,'tile-size-l':tl,'tile-size-w':tw,'tile-unit':unit,'tile-waste':waste}});
   showSaveForm('tile');
 }
@@ -1229,16 +1319,21 @@ function calcPaint(){
   var totalArea=netAreaM*coats;
   var cans=Math.ceil(totalArea/coverage);
 
+  // v8: Existing stock deduction
+  var paintStock=getNum('paint-stock');if(paintStock===null||paintStock<0)paintStock=0;
+  var cansToBuy=Math.max(0,cans-Math.floor(paintStock));
+  var paintStockNote=paintStock>0?'<span class="stock-deduction">Already have: '+escapeHtml(Math.floor(paintStock))+' can(s) \u2192 Need to buy: '+escapeHtml(cansToBuy)+' can(s)</span>':'';
   showResult('result-paint',
-    escapeHtml(cans)+' can'+(cans!==1?'s':''),
+    escapeHtml(paintStock>0?cansToBuy:cans)+' can'+(((paintStock>0?cansToBuy:cans)!==1)?'s':'')+((paintStock>0)?' to buy':''),
     '<span>Wall perimeter: '+escapeHtml(round(perimeter))+' '+escapeHtml(unitLabel(unit))+'</span>'+
     '<span>Gross wall area: '+escapeHtml(round(wallArea))+' '+escapeHtml(unitLabel(unit,true))+'</span>'+
     '<span>Minus '+escapeHtml(doors)+' door(s) + '+escapeHtml(windows)+' window(s): \u2212'+escapeHtml(round(subtract))+' '+escapeHtml(unitLabel(unit,true))+'</span>'+
     '<span>Net paintable area: '+escapeHtml(round(netAreaM))+' m\u00B2 \u00D7 '+escapeHtml(coats)+' coat(s) = '+escapeHtml(round(totalArea))+' m\u00B2</span>'+
-    '<span>Coverage per can: '+escapeHtml(coverage)+' m\u00B2</span>'
+    '<span>Coverage per can: '+escapeHtml(coverage)+' m\u00B2</span>'+
+    paintStockNote
   );
-  lastPaintResult={cans:cans,netAreaM:round(netAreaM),coats:coats};
-  showCost('paint',cans,'paint-price');
+  lastPaintResult={cans:cans,cansToBuy:cansToBuy,netAreaM:round(netAreaM),coats:coats,stock:Math.floor(paintStock)};
+  showCost('paint',paintStock>0?cansToBuy:cans,'paint-price');
   addHistory({calculator_type:'paint',inputs_summary:l+'x'+w+'x'+h+' '+unitLabel(unit)+', '+coats+' coat(s)',result:cans+' can'+(cans!==1?'s':''),fields:{'paint-length':l,'paint-width':w,'paint-height':h,'paint-unit':unit,'paint-doors':doors,'paint-windows':windows,'paint-coats':coats,'paint-coverage':$('paint-coverage').value}});
   showSaveForm('paint');
 }
@@ -1276,16 +1371,21 @@ function calcFloor(){
   var areaWithWaste=areaM*(1+totalWaste/100);
   var packs=Math.ceil(areaWithWaste/packSize);
 
+  // v8: Existing stock deduction
+  var floorStock=getNum('floor-stock');if(floorStock===null||floorStock<0)floorStock=0;
+  var packsToBuy=Math.max(0,packs-Math.floor(floorStock));
+  var floorStockNote=floorStock>0?'<span class="stock-deduction">Already have: '+escapeHtml(Math.floor(floorStock))+' pack(s) \u2192 Need to buy: '+escapeHtml(packsToBuy)+' pack(s)</span>':'';
   showResult('result-floor',
-    escapeHtml(packs)+' pack'+(packs!==1?'s':''),
+    escapeHtml(floorStock>0?packsToBuy:packs)+' pack'+((floorStock>0?packsToBuy:packs)!==1?'s':'')+((floorStock>0)?' to buy':''),
     '<span>Room area: '+escapeHtml(round(areaM))+' m\u00B2</span>'+
     '<span>Waste: '+escapeHtml(totalWaste)+'% ('+escapeHtml(baseWaste)+'% '+escapeHtml(direction)+' + '+escapeHtml(extraWaste)+'% extra)</span>'+
     '<span>Area with waste: '+escapeHtml(round(areaWithWaste))+' m\u00B2</span>'+
     '<span>Pack coverage: '+escapeHtml(packSize)+' m\u00B2 per pack</span>'+
-    '<span>Total coverage: '+escapeHtml(round(packs*packSize))+' m\u00B2 (surplus: '+escapeHtml(round(packs*packSize-areaM))+' m\u00B2)</span>'
+    '<span>Total coverage: '+escapeHtml(round(packs*packSize))+' m\u00B2 (surplus: '+escapeHtml(round(packs*packSize-areaM))+' m\u00B2)</span>'+
+    floorStockNote
   );
-  lastFloorResult={packs:packs,areaM:round(areaM),packSize:packSize};
-  showCost('floor',packs,'floor-price');
+  lastFloorResult={packs:packs,packsToBuy:packsToBuy,areaM:round(areaM),packSize:packSize,stock:Math.floor(floorStock)};
+  showCost('floor',floorStock>0?packsToBuy:packs,'floor-price');
   addHistory({calculator_type:'floor',inputs_summary:l+'x'+w+' '+unitLabel(unit)+', '+packSize+' m\u00B2/pack',result:packs+' pack'+(packs!==1?'s':''),fields:{'floor-length':l,'floor-width':w,'floor-unit':unit,'floor-packsize':packVal,'floor-direction':direction,'floor-extra-waste':extraWaste}});
   showSaveForm('floor');
 }
@@ -1324,15 +1424,20 @@ function calcConcrete(){
   var spillageNote=spillage>0?
     '<span>Spillage allowance: +10% ('+escapeHtml(round(volumeRaw*spillage,3))+' m\u00B3)</span>':'';
 
+  // v8: Existing stock deduction
+  var concStock=getNum('conc-stock');if(concStock===null||concStock<0)concStock=0;
+  var bagsToBuy=Math.max(0,bags-Math.floor(concStock));
+  var concStockNote=concStock>0?'<span class="stock-deduction">Already have: '+escapeHtml(Math.floor(concStock))+' bag(s) \u2192 Need to buy: '+escapeHtml(bagsToBuy)+' bag(s)</span>':'';
   showResult('result-concrete',
     escapeHtml(round(volume,3))+' m\u00B3',
     '<span>Dimensions: '+escapeHtml(round(lm,2))+' \u00D7 '+escapeHtml(round(wm,2))+' \u00D7 '+escapeHtml(round(tm,3))+' m</span>'+
     '<span>Net volume: '+escapeHtml(round(volumeRaw,3))+' m\u00B3 ('+escapeHtml(round(volumeRaw*35.3147,2))+' cu.ft)</span>'+
     spillageNote+
-    '<span>Total: '+escapeHtml(round(volume,3))+' m\u00B3 | Bags needed: '+escapeHtml(bags)+' ('+escapeHtml(bagSize)+' m\u00B3 each)</span>'
+    '<span>Total: '+escapeHtml(round(volume,3))+' m\u00B3 | Bags needed: '+escapeHtml(bags)+' ('+escapeHtml(bagSize)+' m\u00B3 each)</span>'+
+    concStockNote
   );
-  lastConcreteResult={volume:round(volume,3),bags:bags,bagSize:bagSize};
-  showCost('concrete',bags,'conc-price');
+  lastConcreteResult={volume:round(volume,3),bags:bags,bagsToBuy:bagsToBuy,bagSize:bagSize,stock:Math.floor(concStock)};
+  showCost('concrete',concStock>0?bagsToBuy:bags,'conc-price');
   addHistory({calculator_type:'concrete',inputs_summary:l+'x'+w+'x'+t+' '+unitLabel(unit),result:round(volume,3)+' m\u00B3, '+bags+' bags',fields:{'conc-length':l,'conc-width':w,'conc-thick':t,'conc-unit':unit,'conc-bag':$('conc-bag').value,'conc-spillage':$('conc-spillage').checked}});
   showSaveForm('concrete');
 }
@@ -2021,6 +2126,28 @@ function initPWAInstall(){
   });
 }
 
+/* === v8: MATERIAL DATABASE === */
+function initMaterialLookup(){
+  $('material-lookup-toggle').addEventListener('click',function(){
+    $('material-lookup').classList.toggle('open');
+  });
+  $('material-lookup-toggle').addEventListener('keydown',function(e){
+    if(e.key==='Enter'||e.key===' '){
+      e.preventDefault();
+      $('material-lookup').classList.toggle('open');
+    }
+  });
+}
+
+/* === v8: PRINT PROJECT REPORT === */
+function initPrintReport(){
+  $('btn-print-report').addEventListener('click',function(){
+    var dateEl=$('print-report-date');
+    if(dateEl)dateEl.textContent='Generated: '+new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'});
+    window.print();
+  });
+}
+
 /* === INIT === */
 function init(){
   initTheme();
@@ -2042,6 +2169,8 @@ function init(){
   initAutoSave();
   initKeyboardShortcuts();
   initPWAInstall();
+  initMaterialLookup();
+  initPrintReport();
   $('btn-theme').addEventListener('click',toggleTheme);
 
   // Restore last tab
