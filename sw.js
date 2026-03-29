@@ -1,7 +1,7 @@
 /* BuildCalc Service Worker — offline caching */
 'use strict';
 
-var CACHE_NAME = 'buildcalc-v2.1';
+var CACHE_NAME = 'buildcalc-v4.0';
 var ASSETS = [
   './',
   './index.html',
