@@ -1,5 +1,21 @@
 # Changelog
 
+## v9.0 — Share, Animations & Polish (2026-03-29)
+
+### Share on Twitter/X
+- New header button opens Twitter/X with pre-filled tweet: "Just calculated my renovation materials with BuildCalc" + link
+
+### Result Spring Animation
+- Result numbers now play a spring-scale pop animation (`springPop` keyframes) when calculation completes, replacing the simple pulse
+
+### Unit Toggle Animated Slide
+- Converter unit labels slide out/in with a smooth transition when switching conversion types (e.g. ft/m to sq.ft/m2)
+
+### Service Worker
+- Cache version bumped to `buildcalc-v9.0`
+
+---
+
 ## v8.0 — Material Database, Stock Deduction & Print Report (2026-03-29)
 
 ### Material Database
