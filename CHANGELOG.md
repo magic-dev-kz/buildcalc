@@ -1,5 +1,30 @@
 # Changelog
 
+## v12.0 — Room Presets, Project Total & Share (2026-03-29)
+
+### Room Size Presets
+- Quick-fill buttons added to Area, Tile, Paint, and Flooring calculators
+- 4 common room sizes: Small Bathroom (2.5x2m), Standard Bedroom (4x3.5m), Living Room (5x4m), Kitchen (3x3m)
+- Clicking a preset fills length/width, sets unit to meters, and auto-triggers calculation
+- Toast notification confirms which preset was applied
+
+### Total Project Cost Summary
+- New "Project Total" section appears when any calculator has a cost estimate filled in
+- Sums costs across all calculators (Tiles + Paint + Flooring + Concrete)
+- Shows total with breakdown by category
+- Updates automatically whenever costs change or forms are cleared
+
+### Share Project Summary
+- "Share Project Summary" button copies a full text report to clipboard
+- Report includes: all visible calculator results with details, cost estimates, shopping list, and project total
+- Formatted for easy sharing via chat, email, or notes
+- Button only visible when there are cost estimates to share
+
+### Service Worker
+- Cache version bumped to `buildcalc-v12.0`
+
+---
+
 ## v11.0 — Micro-polish (2026-03-29)
 - Onboarding logo animation upgraded to scale-bounce (cubic-bezier spring)
 - Active tab subtle glow pulse animation (`tabGlowPulse`)

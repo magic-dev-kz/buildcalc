@@ -334,7 +334,8 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
 .history-item:focus-visible,.history-clear:focus-visible,
 .shopping-item-del:focus-visible,.project-item-actions button:focus-visible,
 .btn-share-list:focus-visible,.btn-secondary:focus-visible,
-.onboarding-cta:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.onboarding-cta:focus-visible,.room-preset-btn:focus-visible,
+.btn-share-project:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
 /* COUNTUP ANIMATION (v6) + SPRING POP (v9) */
 .result-value{transition:opacity 0.2s ease}
@@ -383,7 +384,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
 @media print{
   body>*:not(.main):not(.header),
   .header,.nav,.measure-guide,.shopping-section,
-  .save-form,.btn-primary,.btn-clear-form,.btn-add-shopping,.btn-print-report,
+  .save-form,.btn-primary,.btn-clear-form,.btn-add-shopping,.btn-print-report,.btn-share-project,.room-presets,
   .history-section,.onboarding,.projects-panel,.pwa-banner,.footer,.oc-footer,
   .nav-tab,.toast,.skip-link{display:none!important}
   .calc-section{display:block!important;animation:none!important}
@@ -397,6 +398,33 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
   .print-report-header h1{font-size:1.5rem;font-weight:900;color:#D4621A}
   .print-report-header p{font-size:0.9rem;color:#666;margin-top:4px}
 }
+/* v12: ROOM SIZE PRESETS */
+.room-presets{margin-bottom:18px}
+.room-presets-label{display:block;font-size:0.82rem;font-weight:700;color:var(--text-secondary);margin-bottom:7px;text-transform:uppercase;letter-spacing:0.04em}
+.room-presets-grid{display:flex;flex-wrap:wrap;gap:8px}
+.room-preset-btn{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:var(--radius-sm);font-size:0.82rem;font-weight:600;color:var(--text-secondary);background:var(--bg-input);border:1.5px solid var(--border);transition:all var(--transition);white-space:nowrap;cursor:pointer}
+.room-preset-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light);transform:translateY(-1px);box-shadow:var(--shadow)}
+.room-preset-btn:active{transform:translateY(0)}
+.room-preset-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.room-preset-btn .preset-icon{font-size:1rem}
+
+/* v12: PROJECT TOTAL SUMMARY */
+.project-total-section{margin-bottom:24px;display:none}
+.project-total-card{background:var(--bg-card);border-radius:var(--radius);border:1.5px solid var(--accent);box-shadow:var(--shadow-card),var(--shadow-glow);padding:24px 28px;animation:cardIn 0.45s cubic-bezier(0.34,1.56,0.64,1)}
+.project-total-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.project-total-header h2{font-size:1.1rem;font-weight:800;display:flex;align-items:center;gap:8px;letter-spacing:-0.02em}
+.project-total-value{font-size:2.2rem;font-weight:900;color:var(--accent);letter-spacing:-0.03em;line-height:1.2;margin-bottom:16px}
+.project-total-breakdown{display:flex;flex-direction:column;gap:8px}
+.project-total-item{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:var(--bg-input);border-radius:var(--radius-sm);font-size:0.88rem}
+.project-total-item-label{font-weight:600;color:var(--text-secondary)}
+.project-total-item-value{font-weight:800;color:var(--accent)}
+
+/* v12: SHARE PROJECT BUTTON */
+.btn-share-project{margin-top:12px;height:48px;padding:0 22px;font-size:0.9rem;background:var(--accent-gradient);color:#fff;border-radius:var(--radius-sm);font-weight:700;width:100%;transition:all var(--transition);box-shadow:0 4px 16px rgba(212,98,26,0.25);display:none}
+.btn-share-project:hover{background:var(--accent-gradient-hover);transform:translateY(-2px);box-shadow:0 8px 24px rgba(212,98,26,0.35)}
+.btn-share-project:active{transform:translateY(0)}
+.btn-share-project:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
 .print-report-header{display:none}
 
 /* REDUCED MOTION */
@@ -533,6 +561,17 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
         </div>
       </div>
 
+      <!-- v12: Room Size Presets -->
+      <div class="room-presets" id="room-presets-area">
+        <label class="room-presets-label">Quick Room Sizes</label>
+        <div class="room-presets-grid">
+          <button type="button" class="room-preset-btn" data-length="2.5" data-width="2" data-target="area"><span class="preset-icon">&#x1F6BF;</span> Small Bathroom (2.5x2m)</button>
+          <button type="button" class="room-preset-btn" data-length="4" data-width="3.5" data-target="area"><span class="preset-icon">&#x1F6CF;</span> Standard Bedroom (4x3.5m)</button>
+          <button type="button" class="room-preset-btn" data-length="5" data-width="4" data-target="area"><span class="preset-icon">&#x1F6CB;</span> Living Room (5x4m)</button>
+          <button type="button" class="room-preset-btn" data-length="3" data-width="3" data-target="area"><span class="preset-icon">&#x1F373;</span> Kitchen (3x3m)</button>
+        </div>
+      </div>
+
       <div id="area-rect-fields">
         <div class="form-row">
           <div class="form-group">
@@ -603,6 +642,16 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
     <div class="card">
       <div class="card-title">Tile Calculator</div>
       <div class="card-subtitle">How many tiles you need + 10% waste</div>
+      <!-- v12: Room Size Presets -->
+      <div class="room-presets">
+        <label class="room-presets-label">Quick Room Sizes</label>
+        <div class="room-presets-grid">
+          <button type="button" class="room-preset-btn" data-length="2.5" data-width="2" data-target="tile"><span class="preset-icon">&#x1F6BF;</span> Small Bathroom (2.5x2m)</button>
+          <button type="button" class="room-preset-btn" data-length="4" data-width="3.5" data-target="tile"><span class="preset-icon">&#x1F6CF;</span> Standard Bedroom (4x3.5m)</button>
+          <button type="button" class="room-preset-btn" data-length="5" data-width="4" data-target="tile"><span class="preset-icon">&#x1F6CB;</span> Living Room (5x4m)</button>
+          <button type="button" class="room-preset-btn" data-length="3" data-width="3" data-target="tile"><span class="preset-icon">&#x1F373;</span> Kitchen (3x3m)</button>
+        </div>
+      </div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label" for="tile-area-l">Room Length</label>
@@ -665,6 +714,16 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
     <div class="card">
       <div class="card-title">Paint Calculator</div>
       <div class="card-subtitle">Wall area minus doors & windows = cans of paint</div>
+      <!-- v12: Room Size Presets -->
+      <div class="room-presets">
+        <label class="room-presets-label">Quick Room Sizes</label>
+        <div class="room-presets-grid">
+          <button type="button" class="room-preset-btn" data-length="2.5" data-width="2" data-target="paint"><span class="preset-icon">&#x1F6BF;</span> Small Bathroom (2.5x2m)</button>
+          <button type="button" class="room-preset-btn" data-length="4" data-width="3.5" data-target="paint"><span class="preset-icon">&#x1F6CF;</span> Standard Bedroom (4x3.5m)</button>
+          <button type="button" class="room-preset-btn" data-length="5" data-width="4" data-target="paint"><span class="preset-icon">&#x1F6CB;</span> Living Room (5x4m)</button>
+          <button type="button" class="room-preset-btn" data-length="3" data-width="3" data-target="paint"><span class="preset-icon">&#x1F373;</span> Kitchen (3x3m)</button>
+        </div>
+      </div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label" for="paint-length">Room Length</label>
@@ -741,6 +800,16 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
     <div class="card">
       <div class="card-title">Flooring Calculator</div>
       <div class="card-subtitle">Laminate, hardwood, or vinyl plank packs</div>
+      <!-- v12: Room Size Presets -->
+      <div class="room-presets">
+        <label class="room-presets-label">Quick Room Sizes</label>
+        <div class="room-presets-grid">
+          <button type="button" class="room-preset-btn" data-length="2.5" data-width="2" data-target="floor"><span class="preset-icon">&#x1F6BF;</span> Small Bathroom (2.5x2m)</button>
+          <button type="button" class="room-preset-btn" data-length="4" data-width="3.5" data-target="floor"><span class="preset-icon">&#x1F6CF;</span> Standard Bedroom (4x3.5m)</button>
+          <button type="button" class="room-preset-btn" data-length="5" data-width="4" data-target="floor"><span class="preset-icon">&#x1F6CB;</span> Living Room (5x4m)</button>
+          <button type="button" class="room-preset-btn" data-length="3" data-width="3" data-target="floor"><span class="preset-icon">&#x1F373;</span> Kitchen (3x3m)</button>
+        </div>
+      </div>
       <div class="form-row">
         <div class="form-group">
           <label class="form-label" for="floor-length">Room Length</label>
@@ -926,6 +995,20 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
     </div>
     <div id="history-list"></div>
   </div>
+
+  <!-- v12: Project Total Summary -->
+  <div class="project-total-section" id="project-total-section">
+    <div class="project-total-card">
+      <div class="project-total-header">
+        <h2>&#x1F4B0; Project Total</h2>
+      </div>
+      <div class="project-total-value" id="project-total-value">$0.00</div>
+      <div class="project-total-breakdown" id="project-total-breakdown"></div>
+    </div>
+  </div>
+
+  <!-- v12: Share Project Summary -->
+  <button class="btn-share-project" id="btn-share-project" type="button">&#x1F4E4; Share Project Summary</button>
 
   <!-- v8: Print Report Button -->
   <button class="btn-print-report" id="btn-print-report" type="button">&#x1F5A8; Print Project Report</button>
@@ -2173,6 +2256,204 @@ function initPrintReport(){
   });
 }
 
+/* === v12: ROOM SIZE PRESETS === */
+var presetFieldMap={
+  area:{length:'area-length',width:'area-width',unit:'area-unit',calc:'calc-area'},
+  tile:{length:'tile-area-l',width:'tile-area-w',unit:'tile-unit',calc:'calc-tile'},
+  paint:{length:'paint-length',width:'paint-width',unit:'paint-unit',calc:'calc-paint'},
+  floor:{length:'floor-length',width:'floor-width',unit:'floor-unit',calc:'calc-floor'}
+};
+
+function initRoomPresets(){
+  document.addEventListener('click',function(e){
+    var btn=e.target.closest('.room-preset-btn');
+    if(!btn)return;
+    var target=btn.getAttribute('data-target');
+    var length=btn.getAttribute('data-length');
+    var width=btn.getAttribute('data-width');
+    var map=presetFieldMap[target];
+    if(!map)return;
+    // Set unit to meters (presets are in meters)
+    var unitEl=$(map.unit);
+    if(unitEl)unitEl.value='m';
+    // Fill length and width
+    $(map.length).value=length;
+    $(map.width).value=width;
+    // Trigger input events for autosave
+    $(map.length).dispatchEvent(new Event('input'));
+    $(map.width).dispatchEvent(new Event('input'));
+    // Auto-calculate
+    $(map.calc).click();
+    showToast('Preset applied: '+btn.textContent.trim());
+  });
+}
+
+/* === v12: PROJECT TOTAL SUMMARY === */
+function updateProjectTotal(){
+  var costs=[];
+  var total=0;
+  // Tile
+  var tileCostEl=$('cost-tile');
+  if(tileCostEl&&tileCostEl.style.display!=='none'){
+    var v=parseCostValue($('cost-tile-value'));
+    if(v>0){costs.push({label:'Tiles',value:v});total+=v;}
+  }
+  // Paint
+  var paintCostEl=$('cost-paint');
+  if(paintCostEl&&paintCostEl.style.display!=='none'){
+    var v=parseCostValue($('cost-paint-value'));
+    if(v>0){costs.push({label:'Paint',value:v});total+=v;}
+  }
+  // Floor
+  var floorCostEl=$('cost-floor');
+  if(floorCostEl&&floorCostEl.style.display!=='none'){
+    var v=parseCostValue($('cost-floor-value'));
+    if(v>0){costs.push({label:'Flooring',value:v});total+=v;}
+  }
+  // Concrete
+  var concCostEl=$('cost-concrete');
+  if(concCostEl&&concCostEl.style.display!=='none'){
+    var v=parseCostValue($('cost-concrete-value'));
+    if(v>0){costs.push({label:'Concrete',value:v});total+=v;}
+  }
+
+  var section=$('project-total-section');
+  var shareBtn=$('btn-share-project');
+  // Show share button if any result is visible
+  var anyResult=document.querySelector('.result.visible');
+  shareBtn.style.display=anyResult?'block':'none';
+  if(costs.length===0){
+    section.style.display='none';
+    return;
+  }
+  section.style.display='block';
+  $('project-total-value').textContent='Estimated total: $'+total.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  var breakdown=$('project-total-breakdown');
+  breakdown.innerHTML=costs.map(function(c){
+    return '<div class="project-total-item"><span class="project-total-item-label">'+escapeHtml(c.label)+'</span><span class="project-total-item-value">$'+c.value.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+'</span></div>';
+  }).join('');
+}
+
+function parseCostValue(el){
+  if(!el)return 0;
+  var text=el.textContent.replace(/[^0-9.]/g,'');
+  var v=parseFloat(text);
+  return isNaN(v)?0:v;
+}
+
+function initProjectTotal(){
+  // Hook into showResult to update share button visibility after any calculation
+  var origShowResult=showResult;
+  showResult=function(id,value,detail){
+    origShowResult(id,value,detail);
+    setTimeout(updateProjectTotal,50);
+  };
+  // Hook into showCost to update total whenever a cost changes
+  var origShowCost=showCost;
+  showCost=function(calcType,quantity,priceFieldId){
+    origShowCost(calcType,quantity,priceFieldId);
+    setTimeout(updateProjectTotal,50);
+  };
+  // Also update on clear form (which hides cost)
+  var origClearFormSection=clearFormSection;
+  clearFormSection=function(sectionId){
+    origClearFormSection(sectionId);
+    setTimeout(updateProjectTotal,50);
+  };
+}
+
+/* === v12: SHARE PROJECT SUMMARY === */
+function buildProjectSummary(){
+  var lines=[];
+  lines.push('=== BuildCalc Project Summary ===');
+  lines.push('Generated: '+new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'}));
+  lines.push('');
+
+  // Collect results from all calculators that have visible results
+  var sections=[
+    {id:'area',name:'Room Area',valueId:'result-area-value',detailId:'result-area-detail'},
+    {id:'tile',name:'Tile Calculator',valueId:'result-tile-value',detailId:'result-tile-detail',costId:'cost-tile-value'},
+    {id:'paint',name:'Paint Calculator',valueId:'result-paint-value',detailId:'result-paint-detail',costId:'cost-paint-value'},
+    {id:'floor',name:'Flooring Calculator',valueId:'result-floor-value',detailId:'result-floor-detail',costId:'cost-floor-value'},
+    {id:'concrete',name:'Concrete Calculator',valueId:'result-concrete-value',detailId:'result-concrete-detail',costId:'cost-concrete-value'}
+  ];
+
+  var hasResults=false;
+  sections.forEach(function(s){
+    var resultEl=$('result-'+s.id);
+    if(!resultEl||!resultEl.classList.contains('visible'))return;
+    hasResults=true;
+    lines.push('--- '+s.name+' ---');
+    var valEl=$(s.valueId);
+    if(valEl)lines.push('Result: '+valEl.textContent);
+    var detEl=$(s.detailId);
+    if(detEl&&detEl.textContent.trim()){
+      lines.push(detEl.textContent.trim());
+    }
+    if(s.costId){
+      var costEl=$(s.costId);
+      var costContainer=$('cost-'+s.id);
+      if(costEl&&costContainer&&costContainer.style.display!=='none'){
+        lines.push('Estimated cost: '+costEl.textContent);
+      }
+    }
+    lines.push('');
+  });
+
+  // Shopping list
+  var shopList=getShoppingList();
+  if(shopList.length>0){
+    lines.push('--- Shopping List ---');
+    shopList.forEach(function(item){
+      lines.push((item.checked?'[x] ':'[ ] ')+item.name+': '+item.quantity+' '+item.unit);
+    });
+    lines.push('');
+  }
+
+  // Total cost
+  var totalSection=$('project-total-section');
+  if(totalSection&&totalSection.style.display!=='none'){
+    var totalVal=$('project-total-value');
+    if(totalVal)lines.push(totalVal.textContent);
+  }
+
+  if(!hasResults&&shopList.length===0){
+    return null;
+  }
+
+  lines.push('');
+  lines.push('Calculated with BuildCalc (free): https://magic-dev-kz.github.io/buildcalc/');
+  return lines.join('\n');
+}
+
+function initShareProject(){
+  $('btn-share-project').addEventListener('click',function(){
+    var summary=buildProjectSummary();
+    if(!summary){
+      showToast('Nothing to share yet — calculate something first');
+      return;
+    }
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(summary).then(function(){
+        showToast('Project summary copied to clipboard!');
+      },function(){
+        showToast('Could not copy');
+      });
+    }else{
+      try{
+        var ta=document.createElement('textarea');
+        ta.value=summary;ta.style.position='fixed';ta.style.opacity='0';
+        document.body.appendChild(ta);ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('Project summary copied to clipboard!');
+      }catch(ex){
+        showToast('Clipboard not available');
+      }
+    }
+  });
+}
+
 /* === INIT === */
 function init(){
   initTheme();
@@ -2196,6 +2477,9 @@ function init(){
   initPWAInstall();
   initMaterialLookup();
   initPrintReport();
+  initRoomPresets();
+  initProjectTotal();
+  initShareProject();
   $('btn-theme').addEventListener('click',toggleTheme);
 
   // v9: Share on Twitter/X
