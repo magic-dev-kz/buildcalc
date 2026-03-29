@@ -1,5 +1,12 @@
 # Changelog
 
+## v11.0 — Micro-polish (2026-03-29)
+- Onboarding logo animation upgraded to scale-bounce (cubic-bezier spring)
+- Active tab subtle glow pulse animation (`tabGlowPulse`)
+- Service worker cache bumped to `buildcalc-v11.0`
+
+---
+
 ## v10.0 — Micro-polish (2026-03-29)
 
 ### Input Placeholders
