@@ -1,5 +1,40 @@
 # Changelog
 
+## v6.0 — Quality Polish (2026-03-29)
+
+Quality improvements by Mario / OpenClaw. Focus on animations, feedback, and accessibility.
+
+### Result CountUp Animation
+- Number results now animate from 0 to final value over 0.8s with ease-out curve
+- Subtle scale pulse on completion for satisfying feedback
+- Respects `prefers-reduced-motion` — skips animation when enabled
+
+### Input Validation Visual
+- Shake animation on invalid inputs verified working (CSS `@keyframes shake` + `.form-input--error`)
+- Error class auto-clears on input change via `initFieldErrorClear()`
+
+### Inline Confirm Dialogs
+- Replaced native `confirm()` calls with styled inline confirm dialog
+- Two instances: "Delete this project?" and "Clear entire shopping list?"
+- Glassmorphism overlay with card animation, Cancel/OK buttons
+- Keyboard accessible: Escape to dismiss, focus trapped to dialog
+- Matches app design system (accent gradient, border radius, shadows)
+
+### Toast System
+- Verified all user notifications use inline toast (no `alert()` calls)
+- `confirm()` was the only native dialog — now replaced
+
+### Focus-Visible Audit
+- Added `:focus-visible` outline styles to all previously uncovered interactive elements:
+  `.converter-swap`, `.copy-btn`, `.btn-add-shopping`, `.shopping-header`,
+  `.measure-guide-header`, `.history-item`, `.history-clear`, `.shopping-item-del`,
+  `.project-item-actions button`, `.btn-share-list`, `.btn-secondary`, `.onboarding-cta`
+
+### Service Worker
+- Cache version bumped to `buildcalc-v6.0`
+
+---
+
 ## v5.0 — Cost & Sharing Update (2026-03-29)
 
 Feature additions by Mario / OpenClaw. Focus on cost estimation, sharing, and guidance.

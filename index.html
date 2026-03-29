@@ -322,6 +322,32 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
 .measure-tip:last-child{border-bottom:none}
 .measure-tip-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px}
 
+/* FOCUS-VISIBLE AUDIT (v6) — catch-all for interactive elements */
+.converter-swap:focus-visible,.copy-btn:focus-visible,.btn-add-shopping:focus-visible,
+.shopping-header:focus-visible,.measure-guide-header:focus-visible,
+.history-item:focus-visible,.history-clear:focus-visible,
+.shopping-item-del:focus-visible,.project-item-actions button:focus-visible,
+.btn-share-list:focus-visible,.btn-secondary:focus-visible,
+.onboarding-cta:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* COUNTUP ANIMATION (v6) */
+.result-value{transition:opacity 0.2s ease}
+@keyframes countPulse{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
+.result-value.counting-done{animation:countPulse 0.3s cubic-bezier(0.34,1.56,0.64,1)}
+
+/* CONFIRM DIALOG (v6) — replaces native confirm() */
+.confirm-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;animation:fadeIn 0.2s ease}
+.confirm-box{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;max-width:360px;width:90%;box-shadow:var(--shadow-lg);animation:cardIn 0.35s cubic-bezier(0.34,1.56,0.64,1)}
+.confirm-box p{font-size:1rem;font-weight:600;margin-bottom:20px;color:var(--text);line-height:1.5}
+.confirm-actions{display:flex;gap:10px}
+.confirm-actions button{flex:1;height:46px;border-radius:var(--radius-sm);font-weight:700;font-size:0.9rem;transition:all var(--transition)}
+.confirm-cancel{background:var(--bg-input);color:var(--text-secondary);border:1.5px solid var(--border)}
+.confirm-cancel:hover{border-color:var(--accent);color:var(--accent)}
+.confirm-cancel:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.confirm-ok{background:var(--accent-gradient);color:#fff;box-shadow:0 4px 16px rgba(212,98,26,0.25)}
+.confirm-ok:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(212,98,26,0.35)}
+.confirm-ok:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
 /* REDUCED MOTION */
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important}
@@ -907,8 +933,34 @@ function focusFirstError(ids){
 function showResult(id,value,detail){
   var el=$(id);
   el.classList.add('visible');
-  $(id+'-value').textContent=value;
   $(id+'-detail').innerHTML=detail||'';
+  // CountUp animation (v6)
+  var valEl=$(id+'-value');
+  var numMatch=value.match(/^([\d,.]+)/);
+  if(numMatch){
+    var finalNum=parseFloat(numMatch[1].replace(/,/g,''));
+    var suffix=value.slice(numMatch[1].length);
+    var decimals=(numMatch[1].indexOf('.')!==-1)?numMatch[1].split('.')[1].length:0;
+    var startTime=null;
+    var duration=800;
+    valEl.classList.remove('counting-done');
+    function animate(ts){
+      if(!startTime)startTime=ts;
+      var progress=Math.min((ts-startTime)/duration,1);
+      var eased=1-Math.pow(1-progress,3);
+      var current=eased*finalNum;
+      valEl.textContent=current.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g,',')+suffix;
+      if(progress<1){requestAnimationFrame(animate);}
+      else{valEl.textContent=value;valEl.classList.add('counting-done');}
+    }
+    if(window.matchMedia('(prefers-reduced-motion:reduce)').matches){
+      valEl.textContent=value;
+    }else{
+      requestAnimationFrame(animate);
+    }
+  }else{
+    valEl.textContent=value;
+  }
 }
 
 function hideResult(id){
@@ -1312,12 +1364,28 @@ function saveProject(proj){
   showToast('Project saved!');
   return proj;
 }
+function showConfirm(msg,onConfirm){
+  var overlay=document.createElement('div');
+  overlay.className='confirm-overlay';
+  overlay.innerHTML='<div class="confirm-box"><p>'+escapeHtml(msg)+'</p><div class="confirm-actions"><button class="confirm-cancel">Cancel</button><button class="confirm-ok">OK</button></div></div>';
+  document.body.appendChild(overlay);
+  var okBtn=overlay.querySelector('.confirm-ok');
+  var cancelBtn=overlay.querySelector('.confirm-cancel');
+  function close(){document.body.removeChild(overlay);}
+  okBtn.addEventListener('click',function(){close();onConfirm();});
+  cancelBtn.addEventListener('click',close);
+  overlay.addEventListener('click',function(e){if(e.target===overlay)close();});
+  var handler=function(e){if(e.key==='Escape'){close();document.removeEventListener('keydown',handler);}};
+  document.addEventListener('keydown',handler);
+  okBtn.focus();
+}
 function deleteProject(id){
-  if(!confirm('Delete this project?'))return;
-  var projects=getProjects().filter(function(p){return p.id!==id;});
-  storageSet('projects',projects);
-  renderProjects();
-  showToast('Project deleted');
+  showConfirm('Delete this project?',function(){
+    var projects=getProjects().filter(function(p){return p.id!==id;});
+    storageSet('projects',projects);
+    renderProjects();
+    showToast('Project deleted');
+  });
 }
 
 function renderProjects(){
@@ -1580,10 +1648,12 @@ function deleteShoppingItem(id){
   renderShopping();
 }
 function clearShopping(){
-  if(!confirm('Clear entire shopping list?'))return;
-  try{localStorage.removeItem(SHOPPING_KEY);}catch(e){}
-  renderShopping();
-  showToast('Shopping list cleared');
+  showConfirm('Clear entire shopping list?',function(){
+    try{localStorage.removeItem(SHOPPING_KEY);}catch(e){}
+    renderShopping();
+    showToast('Shopping list cleared');
+  });
+  return;
 }
 function copyShopping(){
   var list=getShoppingList();
