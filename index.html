@@ -257,6 +257,8 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
 
 /* FIELD ERROR */
 .form-input--error{border-color:#D04040!important;background:rgba(208,64,64,0.06)!important;animation:shake 0.4s ease}
+.form-error-msg{font-size:0.78rem;color:#D04040;font-weight:600;margin-top:4px;display:none}
+.form-error-msg.visible{display:block}
 @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-4px)}40%,80%{transform:translateX(4px)}}
 
 /* COPY BUTTON */
@@ -484,7 +486,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
 </style>
 </head>
 <body>
-<a class="skip-link" href="#main-content">Skip to content</a>
+<a class="skip-link" href="#main-content">Skip to calculator</a>
 
 <!-- HEADER -->
 <header class="header" role="banner">
@@ -1032,15 +1034,15 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
       </div>
       <div class="converter-grid">
         <div class="form-group">
-          <label class="form-label" id="conv-from-label">Feet</label>
-          <input class="form-input" type="number" id="conv-from" placeholder="0" min="0" step="any" inputmode="decimal" aria-labelledby="conv-from-label">
+          <label class="form-label" id="conv-from-label" for="conv-from">Feet</label>
+          <input class="form-input" type="number" id="conv-from" placeholder="0" min="0" step="any" inputmode="decimal">
         </div>
         <button class="converter-swap" id="conv-swap" aria-label="Swap units" title="Swap direction">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
         </button>
         <div class="form-group">
-          <label class="form-label" id="conv-to-label">Meters</label>
-          <input class="form-input" type="number" id="conv-to" placeholder="0" min="0" step="any" inputmode="decimal" aria-labelledby="conv-to-label">
+          <label class="form-label" id="conv-to-label" for="conv-to">Meters</label>
+          <input class="form-input" type="number" id="conv-to" placeholder="0" min="0" step="any" inputmode="decimal">
         </div>
       </div>
     </div>
@@ -1185,15 +1187,33 @@ function requirePositive(id){
   return v;
 }
 
-function markError(id){
+function markError(id,msg){
   var el=$(id);
   el.classList.add('form-input--error');
+  var errId=id+'-error';
+  var errEl=document.getElementById(errId);
+  if(!errEl){
+    errEl=document.createElement('div');
+    errEl.id=errId;
+    errEl.className='form-error-msg';
+    errEl.setAttribute('role','alert');
+    errEl.setAttribute('aria-live','assertive');
+    el.setAttribute('aria-describedby',errId);
+    el.parentNode.appendChild(errEl);
+  }
+  errEl.textContent=msg||'Value must be greater than 0';
+  errEl.classList.add('visible');
 }
 
 function clearErrors(ids){
   ids.forEach(function(id){
     var el=$(id);
-    if(el)el.classList.remove('form-input--error');
+    if(el){
+      el.classList.remove('form-input--error');
+      el.removeAttribute('aria-describedby');
+    }
+    var errEl=document.getElementById(id+'-error');
+    if(errEl){errEl.classList.remove('visible');errEl.textContent='';}
   });
 }
 
@@ -1201,6 +1221,9 @@ function initFieldErrorClear(){
   qa('.form-input').forEach(function(el){
     el.addEventListener('input',function(){
       this.classList.remove('form-input--error');
+      this.removeAttribute('aria-describedby');
+      var errEl=document.getElementById(this.id+'-error');
+      if(errEl){errEl.classList.remove('visible');errEl.textContent='';}
     });
   });
 }
@@ -1414,7 +1437,7 @@ function calcArea(){
     clearErrors(fields);
     var tw=requirePositive('area-l-totalw'),th=requirePositive('area-l-totalh'),cw=requirePositive('area-l-cutw'),ch=requirePositive('area-l-cuth');
     if(tw===null||th===null||cw===null||ch===null){showToast('Value must be greater than 0');focusFirstError(fields);return;}
-    if(cw>=tw||ch>=th){showToast('Cutout must be smaller than total');return;}
+    if(cw>=tw||ch>=th){markError('area-l-cutw','Cutout must be smaller than total');markError('area-l-cuth','Cutout must be smaller than total');showToast('Cutout must be smaller than total');return;}
     var unit=$('area-l-unit').value;
     var area=tw*th-cw*ch;
     var areaM=unit==='ft'?toSqMeters(area,'ft'):area;
@@ -2286,6 +2309,9 @@ function clearFormSection(sectionId){
       el.value='';
     }
     el.classList.remove('form-input--error');
+    el.removeAttribute('aria-describedby');
+    var errEl=document.getElementById(el.id+'-error');
+    if(errEl){errEl.classList.remove('visible');errEl.textContent='';}
   });
   // Hide result
   var resultEl=$('result-'+sectionId);

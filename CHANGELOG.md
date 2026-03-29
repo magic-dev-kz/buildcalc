@@ -1,5 +1,29 @@
 # Changelog
 
+## v17.0 (2026-03-29) — Accessibility & Validation
+
+Accessibility improvements by Mario.
+
+### Skip-to-Content Link
+- Updated skip link text to "Skip to calculator" for clearer screen reader navigation
+- Link remains visually hidden, appears on keyboard focus at top of page
+
+### Input Labels
+- Converter inputs (`conv-from`, `conv-to`) now use proper `for=` attribute on labels instead of `aria-labelledby`
+- All input fields across all calculators have visible `<label>` elements with `for=` attributes
+
+### Inline Error Messages
+- Validation errors now render inline beneath the invalid field
+- Each error message element has `role="alert"` and `aria-live="assertive"` for immediate screen reader announcement
+- Invalid inputs get `aria-describedby` pointing to their error message
+- Error messages auto-clear when user types in the field
+- L-shape cutout validation ("Cutout must be smaller than total") now also marks fields with inline errors
+
+### Service Worker
+- Cache version bumped to `buildcalc-v17.0`
+
+---
+
 ## v16.0 (2026-03-29) — Tab Calculation History
 
 - **Tab History**: Show last 3 calculations per calculator tab in the result area
