@@ -1,5 +1,23 @@
 # Changelog
 
+## v14.0 — Undo Last Calculation (2026-03-29)
+
+Feature update by Mario.
+
+### Undo Last Calculation
+- New "Undo" button appears next to each Calculate button after a calculation is performed
+- Captures all input field values (inputs, selects, checkboxes) before each calculation
+- Clicking Undo restores the previous input values, hides the result, and hides the save form
+- One level deep: stores only the most recent pre-calculation state per calculator
+- Toast notification "Restored previous values" on undo
+- Button styled as secondary with undo arrow icon
+- Works across all 5 calculators: Area, Tile, Paint, Flooring, Concrete
+
+### Service Worker
+- Cache version bumped to `buildcalc-v14.0`
+
+---
+
 ## v12.0 — Room Presets, Project Total & Share (2026-03-29)
 
 ### Room Size Presets
