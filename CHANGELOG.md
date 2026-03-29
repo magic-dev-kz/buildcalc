@@ -1,5 +1,9 @@
 # Changelog
 
+## v16.0 (2026-03-29) — Tab Calculation History
+
+- **Tab History**: Show last 3 calculations per calculator tab in the result area
+- SW cache bumped to `buildcalc-v16.0`
 ## v15.0 — Quick Unit Info (2026-03-29)
 
 Feature update by Mario.
