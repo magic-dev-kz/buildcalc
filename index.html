@@ -120,7 +120,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
 @keyframes resultShine{from{transform:translate(-30%,30%) scale(0.5);opacity:1}to{transform:translate(30%,-30%) scale(2);opacity:0}}
 .result.visible{display:block}
 .result-label{font-size:0.82rem;font-weight:700;color:var(--success);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em}
-.result-value{font-size:2rem;font-weight:900;color:var(--success);letter-spacing:-0.03em;line-height:1.2}
+.result-value{font-size:2.4rem;font-weight:900;color:var(--success);letter-spacing:-0.03em;line-height:1.2}
 .result-detail{font-size:0.88rem;color:var(--text-secondary);margin-top:12px;line-height:1.7}
 .result-detail span{display:block;padding:2px 0}
 
@@ -213,7 +213,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
   .form-row,.form-row-3{grid-template-columns:1fr}
   .converter-grid{grid-template-columns:1fr;gap:8px}
   .converter-swap{width:100%;height:42px}
-  .result-value{font-size:1.6rem}
+  .result-value{font-size:1.8rem}
   .header{padding:10px 14px}
   .nav-tab{padding:10px 16px}
   .onboarding-content h1{font-size:2rem}
@@ -339,7 +339,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
 .result-value{transition:opacity 0.2s ease}
 @keyframes countPulse{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
 .result-value.counting-done{animation:springPop 0.6s cubic-bezier(0.34,1.56,0.64,1)}
-@keyframes springPop{0%{transform:scale(0.85);opacity:0.6}40%{transform:scale(1.12)}70%{transform:scale(0.97)}100%{transform:scale(1);opacity:1}}
+@keyframes springPop{0%{transform:scale(0.8);opacity:0.5}30%{transform:scale(1.15)}55%{transform:scale(0.93)}75%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}
 
 /* CONFIRM DIALOG (v6) — replaces native confirm() */
 .confirm-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;animation:fadeIn 0.2s ease}
@@ -536,7 +536,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
         <div class="form-row">
           <div class="form-group">
             <label class="form-label" for="area-length">Length</label>
-            <input class="form-input" type="number" id="area-length" placeholder="e.g. 5.0" min="0" step="0.01" inputmode="decimal">
+            <input class="form-input" type="number" id="area-length" placeholder="e.g. 5.5" min="0" step="0.01" inputmode="decimal">
           </div>
           <div class="form-group">
             <label class="form-label" for="area-width">Width</label>
@@ -2232,6 +2232,11 @@ function init(){
       if(document.activeElement===last){e.preventDefault();first.focus();}
     }
   });
+
+  // v10: Print tip toast on first visit
+  if(!storageGet('print_tip_shown',false)){
+    setTimeout(function(){showToast('Tip: Save as PDF for digital sharing');storageSet('print_tip_shown',true);},3000);
+  }
 
   // Register Service Worker
   if('serviceWorker' in navigator){

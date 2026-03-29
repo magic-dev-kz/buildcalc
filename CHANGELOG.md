@@ -1,5 +1,21 @@
 # Changelog
 
+## v10.0 — Micro-polish (2026-03-29)
+
+### Input Placeholders
+- Dimension fields already carry helpful placeholders ("e.g. 5.5") for all calculators
+
+### Print Toast Hint
+- First-visit toast updated to "Tip: Save as PDF for digital sharing"
+
+### Result Spring Pop
+- `springPop` keyframe overshoot refined (scale 0.8 -> 1.15 -> 1) for a tighter spring feel
+
+### Service Worker
+- Cache version bumped to `buildcalc-v10.0`
+
+---
+
 ## v9.0 — Share, Animations & Polish (2026-03-29)
 
 ### Share on Twitter/X
