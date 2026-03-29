@@ -102,6 +102,13 @@ input,select{font-family:inherit;font-size:inherit}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
 select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 8L1 3h10z' fill='%237A6A58'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;padding-right:40px}
+/* Unit Info Tooltip */
+.unit-select-wrap{position:relative;display:flex;align-items:center;gap:8px}
+.unit-select-wrap select.form-input{flex:1}
+.unit-info-hint{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--bg-input);border:1.5px solid var(--border);color:var(--text-muted);font-size:0.75rem;font-weight:700;cursor:help;position:relative;flex-shrink:0;transition:all var(--transition)}
+.unit-info-hint:hover,.unit-info-hint:focus{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
+.unit-info-tooltip{position:absolute;bottom:calc(100% + 8px);right:0;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 12px;font-size:0.78rem;font-weight:600;color:var(--text-secondary);white-space:nowrap;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:opacity 0.2s ease;z-index:50}
+.unit-info-hint:hover .unit-info-tooltip,.unit-info-hint:focus .unit-info-tooltip{opacity:1;pointer-events:auto}
 
 /* BUTTONS */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:54px;padding:0 28px;border-radius:var(--radius-sm);font-size:1rem;font-weight:700;transition:all var(--transition);position:relative;overflow:hidden;letter-spacing:-0.01em}
@@ -600,7 +607,10 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
         </div>
         <div class="form-group">
           <label class="form-label" for="area-unit">Unit</label>
-          <select class="form-input" id="area-unit"><option value="m">Meters</option><option value="ft">Feet</option></select>
+          <div class="unit-select-wrap">
+            <select class="form-input" id="area-unit"><option value="m">Meters</option><option value="ft">Feet</option></select>
+            <span class="unit-info-hint" tabindex="0" aria-label="Unit reference">?<span class="unit-info-tooltip">1 ft = 0.3048 m</span></span>
+          </div>
         </div>
       </div>
 
@@ -631,7 +641,10 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
         </div>
         <div class="form-group">
           <label class="form-label" for="area-l-unit">Unit</label>
-          <select class="form-input" id="area-l-unit"><option value="m">Meters</option><option value="ft">Feet</option></select>
+          <div class="unit-select-wrap">
+            <select class="form-input" id="area-l-unit"><option value="m">Meters</option><option value="ft">Feet</option></select>
+            <span class="unit-info-hint" tabindex="0" aria-label="Unit reference">?<span class="unit-info-tooltip">1 ft = 0.3048 m</span></span>
+          </div>
         </div>
       </div>
 
@@ -693,7 +706,10 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
       <div class="form-row">
         <div class="form-group">
           <label class="form-label" for="tile-unit">Room Unit</label>
-          <select class="form-input" id="tile-unit"><option value="m">Meters</option><option value="ft">Feet</option></select>
+          <div class="unit-select-wrap">
+            <select class="form-input" id="tile-unit"><option value="m">Meters</option><option value="ft">Feet</option></select>
+            <span class="unit-info-hint" tabindex="0" aria-label="Unit reference">?<span class="unit-info-tooltip">1 ft = 0.3048 m</span></span>
+          </div>
         </div>
         <div class="form-group">
           <label class="form-label" for="tile-waste">Waste %</label>
@@ -763,7 +779,10 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
         </div>
         <div class="form-group">
           <label class="form-label" for="paint-unit">Unit</label>
-          <select class="form-input" id="paint-unit"><option value="m">Meters</option><option value="ft">Feet</option></select>
+          <div class="unit-select-wrap">
+            <select class="form-input" id="paint-unit"><option value="m">Meters</option><option value="ft">Feet</option></select>
+            <span class="unit-info-hint" tabindex="0" aria-label="Unit reference">?<span class="unit-info-tooltip">1 ft = 0.3048 m</span></span>
+          </div>
         </div>
       </div>
       <div class="form-row">
@@ -849,7 +868,10 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
       <div class="form-row">
         <div class="form-group">
           <label class="form-label" for="floor-unit">Unit</label>
-          <select class="form-input" id="floor-unit"><option value="m">Meters</option><option value="ft">Feet</option></select>
+          <div class="unit-select-wrap">
+            <select class="form-input" id="floor-unit"><option value="m">Meters</option><option value="ft">Feet</option></select>
+            <span class="unit-info-hint" tabindex="0" aria-label="Unit reference">?<span class="unit-info-tooltip">1 ft = 0.3048 m</span></span>
+          </div>
         </div>
         <div class="form-group">
           <label class="form-label" for="floor-packsize">Pack Coverage</label>
@@ -939,7 +961,10 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
       <div class="form-row">
         <div class="form-group">
           <label class="form-label" for="conc-unit">Unit</label>
-          <select class="form-input" id="conc-unit"><option value="m">Meters</option><option value="ft">Feet</option></select>
+          <div class="unit-select-wrap">
+            <select class="form-input" id="conc-unit"><option value="m">Meters</option><option value="ft">Feet</option></select>
+            <span class="unit-info-hint" tabindex="0" aria-label="Unit reference">?<span class="unit-info-tooltip">1 ft = 0.3048 m</span></span>
+          </div>
         </div>
         <div class="form-group">
           <label class="form-label" for="conc-bag">Bag Size</label>

@@ -1,5 +1,21 @@
 # Changelog
 
+## v15.0 — Quick Unit Info (2026-03-29)
+
+Feature update by Mario.
+
+### Quick Unit Info
+- Hover or focus the "?" icon next to any unit dropdown to see a quick conversion reference
+- Tooltip shows "1 ft = 0.3048 m" for instant reference without performing a conversion
+- Available on all 6 unit selects: Area, Area L-shape, Tile, Paint, Flooring, Concrete
+- Keyboard accessible via focus (tabindex)
+- Styled consistently with app design system
+
+### Service Worker
+- Cache version bumped to `buildcalc-v15.0`
+
+---
+
 ## v14.0 — Undo Last Calculation (2026-03-29)
 
 Feature update by Mario.
