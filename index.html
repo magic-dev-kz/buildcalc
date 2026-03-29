@@ -271,7 +271,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
 
   <!-- SHOPPING LIST -->
   <div class="shopping-section" id="shopping-section" style="display:none">
-    <div class="shopping-header" id="shopping-toggle">
+    <div class="shopping-header" id="shopping-toggle" role="button" tabindex="0">
       <h2>&#x1F6D2; Shopping List <span class="badge" id="shopping-count">0</span></h2>
       <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
     </div>
@@ -764,6 +764,7 @@ function focusFirstError(ids){
   }
 }
 
+// IMPORTANT: detail param must be pre-escaped via escapeHtml()
 function showResult(id,value,detail){
   var el=$(id);
   el.classList.add('visible');
@@ -1183,9 +1184,13 @@ function initProjects(){
   });
   $('close-projects').addEventListener('click',function(){
     $('projects-panel').classList.remove('visible');
+    $('btn-projects').focus();
   });
   $('projects-panel').addEventListener('click',function(e){
-    if(e.target===$('projects-panel'))$('projects-panel').classList.remove('visible');
+    if(e.target===$('projects-panel')){
+      $('projects-panel').classList.remove('visible');
+      $('btn-projects').focus();
+    }
   });
 
   // Event delegation for delete buttons
@@ -1198,6 +1203,7 @@ function initProjects(){
   document.addEventListener('keydown',function(e){
     if(e.key==='Escape'){
       $('projects-panel').classList.remove('visible');
+      $('btn-projects').focus();
     }
   });
 
@@ -1265,7 +1271,17 @@ function initCopyButtons(){
         showToast('Could not copy');
       });
     }else{
-      showToast('Clipboard not available');
+      /* execCommand fallback for non-HTTPS contexts */
+      try{
+        var ta=document.createElement('textarea');
+        ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+        document.body.appendChild(ta);ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        showToast('Copied to clipboard');
+      }catch(ex){
+        showToast('Clipboard not available');
+      }
     }
   });
 }
@@ -1308,7 +1324,7 @@ function renderHistory(){
   el.innerHTML=list.map(function(h,i){
     var icon=historyIcons[h.calculator_type]||'\uD83D\uDCD0';
     var ago=timeAgo(h.timestamp);
-    return '<div class="history-item" data-history-idx="'+i+'">'+
+    return '<div class="history-item" tabindex="0" role="button" data-history-idx="'+i+'">'+
       '<div class="history-item-icon">'+icon+'</div>'+
       '<div class="history-item-info"><h3>'+escapeHtml(h.inputs_summary)+'</h3><p>'+escapeHtml(h.calculator_type)+' &middot; '+escapeHtml(ago)+'</p></div>'+
       '<div class="history-item-result">'+escapeHtml(h.result)+'</div>'+
@@ -1350,6 +1366,14 @@ function initHistory(){
   $('history-list').addEventListener('click',function(e){
     var item=e.target.closest('.history-item');
     if(!item)return;
+    var idx=parseInt(item.getAttribute('data-history-idx'));
+    restoreFromHistory(idx);
+  });
+  $('history-list').addEventListener('keydown',function(e){
+    if(e.key!=='Enter'&&e.key!==' ')return;
+    var item=e.target.closest('.history-item');
+    if(!item)return;
+    e.preventDefault();
     var idx=parseInt(item.getAttribute('data-history-idx'));
     restoreFromHistory(idx);
   });
@@ -1398,7 +1422,19 @@ function copyShopping(){
   }).join('\n');
   if(navigator.clipboard&&navigator.clipboard.writeText){
     navigator.clipboard.writeText(text).then(function(){showToast('List copied to clipboard');},function(){showToast('Could not copy');});
-  }else{showToast('Clipboard not available');}
+  }else{
+    /* execCommand fallback for non-HTTPS contexts */
+    try{
+      var ta=document.createElement('textarea');
+      ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+      document.body.appendChild(ta);ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('List copied to clipboard');
+    }catch(ex){
+      showToast('Clipboard not available');
+    }
+  }
 }
 function renderShopping(){
   var list=getShoppingList();
@@ -1426,6 +1462,12 @@ function initShopping(){
   renderShopping();
   $('shopping-toggle').addEventListener('click',function(){
     $('shopping-section').classList.toggle('open');
+  });
+  $('shopping-toggle').addEventListener('keydown',function(e){
+    if(e.key==='Enter'||e.key===' '){
+      e.preventDefault();
+      $('shopping-section').classList.toggle('open');
+    }
   });
   $('shopping-copy').addEventListener('click',copyShopping);
   $('shopping-clear').addEventListener('click',clearShopping);
