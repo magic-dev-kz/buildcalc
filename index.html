@@ -296,6 +296,32 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
 .history-item-result{font-size:0.92rem;font-weight:800;color:var(--success);white-space:nowrap}
 .no-history{text-align:center;padding:28px;color:var(--text-muted);font-size:0.85rem}
 
+/* COST ESTIMATE */
+.cost-estimate{margin-top:10px;padding:14px 18px;background:var(--accent-light);border-radius:var(--radius-sm);border:1.5px solid var(--accent);animation:fadeIn 0.3s ease}
+.cost-estimate-label{font-size:0.78rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px}
+.cost-estimate-value{font-size:1.5rem;font-weight:900;color:var(--accent);letter-spacing:-0.02em}
+
+/* PRICE PER UNIT FIELD */
+.price-group{margin-top:4px;margin-bottom:18px;position:relative}
+.price-group .form-label{color:var(--accent)}
+
+/* SHARE LIST BTN */
+.btn-share-list{background:var(--accent-gradient);color:#fff;border:none}
+.btn-share-list:hover{background:var(--accent-gradient-hover);transform:translateY(-1px);box-shadow:0 4px 16px rgba(212,98,26,0.25)}
+
+/* MEASURE GUIDE */
+.measure-guide{margin-bottom:24px}
+.measure-guide-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--bg-card);border:1.5px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all var(--transition);user-select:none;box-shadow:var(--shadow)}
+.measure-guide-header:hover{border-color:var(--accent);box-shadow:var(--shadow-lg);transform:translateY(-1px)}
+.measure-guide-header h2{font-size:0.92rem;font-weight:800;display:flex;align-items:center;gap:8px;color:var(--text-secondary)}
+.measure-guide-header .chevron{transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1);color:var(--text-muted)}
+.measure-guide.open .measure-guide-header .chevron{transform:rotate(180deg)}
+.measure-guide-body{display:none;background:var(--bg-card);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:18px 22px;animation:fadeIn 0.25s ease}
+.measure-guide.open .measure-guide-body{display:block}
+.measure-tip{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);font-size:0.88rem;color:var(--text-secondary);line-height:1.5}
+.measure-tip:last-child{border-bottom:none}
+.measure-tip-icon{font-size:1.1rem;flex-shrink:0;margin-top:1px}
+
 /* REDUCED MOTION */
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important}
@@ -333,6 +359,20 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
     <button class="nav-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="convert" id="tab-convert" aria-controls="section-convert"><span class="tab-icon" aria-hidden="true">&#x1F504;</span> Convert</button>
   </nav>
 
+  <!-- HOW TO MEASURE GUIDE -->
+  <div class="measure-guide" id="measure-guide">
+    <div class="measure-guide-header" id="measure-guide-toggle" role="button" tabindex="0">
+      <h2>&#x1F4CF; How to Measure</h2>
+      <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="measure-guide-body">
+      <div class="measure-tip"><span class="measure-tip-icon">&#x1F4CF;</span><span>Always measure in the same unit &mdash; don&rsquo;t mix meters and feet</span></div>
+      <div class="measure-tip"><span class="measure-tip-icon">&#x2795;</span><span>Add 10% for waste &mdash; cuts, breakage, and pattern matching</span></div>
+      <div class="measure-tip"><span class="measure-tip-icon">&#x1F532;</span><span>For L-shaped rooms, split into rectangles and add areas together</span></div>
+      <div class="measure-tip"><span class="measure-tip-icon">&#x2705;</span><span>Measure twice, calculate once &mdash; saves money and trips to the store</span></div>
+    </div>
+  </div>
+
   <!-- SHOPPING LIST -->
   <div class="shopping-section" id="shopping-section" style="display:none">
     <div class="shopping-header" id="shopping-toggle" role="button" tabindex="0">
@@ -342,6 +382,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
     <div class="shopping-body">
       <div id="shopping-items"></div>
       <div class="shopping-actions">
+        <button class="btn btn-share-list" id="shopping-share">&#x1F4E4; Share List</button>
         <button class="btn btn-secondary" id="shopping-copy">&#x1F4CB; Copy List</button>
         <button class="btn btn-secondary" id="shopping-clear" style="color:#D04040">&#x1F5D1; Clear All</button>
       </div>
@@ -461,11 +502,16 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
           <input class="form-input" type="number" id="tile-waste" value="10" min="0" max="50" step="1" inputmode="numeric">
         </div>
       </div>
+      <div class="price-group">
+        <label class="form-label" for="tile-price">Price per tile (optional)</label>
+        <input class="form-input" type="number" id="tile-price" placeholder="e.g. 2.50" min="0" step="0.01" inputmode="decimal">
+      </div>
       <button class="btn btn-primary" id="calc-tile">Calculate Tiles</button>
       <div class="result" id="result-tile" aria-live="polite">
         <div class="result-header"><div class="result-label">Tiles Needed</div><button class="copy-btn" data-copy="tile" aria-label="Copy result">Copy</button></div>
         <div class="result-value" id="result-tile-value"></div>
         <div class="result-detail" id="result-tile-detail"></div>
+        <div class="cost-estimate" id="cost-tile" style="display:none"><div class="cost-estimate-label">Estimated Cost</div><div class="cost-estimate-value" id="cost-tile-value"></div></div>
         <button class="btn-add-shopping" id="add-shopping-tile">&#x1F6D2; Add to Shopping List</button>
       </div>
     </div>
@@ -527,11 +573,16 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
           </select>
         </div>
       </div>
+      <div class="price-group">
+        <label class="form-label" for="paint-price">Price per can (optional)</label>
+        <input class="form-input" type="number" id="paint-price" placeholder="e.g. 25.00" min="0" step="0.01" inputmode="decimal">
+      </div>
       <button class="btn btn-primary" id="calc-paint">Calculate Paint</button>
       <div class="result" id="result-paint" aria-live="polite">
         <div class="result-header"><div class="result-label">Paint Needed</div><button class="copy-btn" data-copy="paint" aria-label="Copy result">Copy</button></div>
         <div class="result-value" id="result-paint-value"></div>
         <div class="result-detail" id="result-paint-detail"></div>
+        <div class="cost-estimate" id="cost-paint" style="display:none"><div class="cost-estimate-label">Estimated Cost</div><div class="cost-estimate-value" id="cost-paint-value"></div></div>
         <button class="btn-add-shopping" id="add-shopping-paint">&#x1F6D2; Add to Shopping List</button>
       </div>
     </div>
@@ -589,11 +640,16 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
           <input class="form-input" type="number" id="floor-extra-waste" value="0" min="0" max="30" step="1" inputmode="numeric">
         </div>
       </div>
+      <div class="price-group">
+        <label class="form-label" for="floor-price">Price per pack (optional)</label>
+        <input class="form-input" type="number" id="floor-price" placeholder="e.g. 18.00" min="0" step="0.01" inputmode="decimal">
+      </div>
       <button class="btn btn-primary" id="calc-floor">Calculate Packs</button>
       <div class="result" id="result-floor" aria-live="polite">
         <div class="result-header"><div class="result-label">Flooring Packs</div><button class="copy-btn" data-copy="floor" aria-label="Copy result">Copy</button></div>
         <div class="result-value" id="result-floor-value"></div>
         <div class="result-detail" id="result-floor-detail"></div>
+        <div class="cost-estimate" id="cost-floor" style="display:none"><div class="cost-estimate-label">Estimated Cost</div><div class="cost-estimate-value" id="cost-floor-value"></div></div>
         <button class="btn-add-shopping" id="add-shopping-floor">&#x1F6D2; Add to Shopping List</button>
       </div>
     </div>
@@ -658,11 +714,16 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
           <span class="toggle-slider" role="presentation"></span>
         </div>
       </div>
+      <div class="price-group">
+        <label class="form-label" for="conc-price">Price per bag (optional)</label>
+        <input class="form-input" type="number" id="conc-price" placeholder="e.g. 6.50" min="0" step="0.01" inputmode="decimal">
+      </div>
       <button class="btn btn-primary" id="calc-concrete">Calculate Concrete</button>
       <div class="result" id="result-concrete" aria-live="polite">
         <div class="result-header"><div class="result-label">Concrete Volume</div><button class="copy-btn" data-copy="concrete" aria-label="Copy result">Copy</button></div>
         <div class="result-value" id="result-concrete-value"></div>
         <div class="result-detail" id="result-concrete-detail"></div>
+        <div class="cost-estimate" id="cost-concrete" style="display:none"><div class="cost-estimate-label">Estimated Cost</div><div class="cost-estimate-value" id="cost-concrete-value"></div></div>
         <button class="btn-add-shopping" id="add-shopping-concrete">&#x1F6D2; Add to Shopping List</button>
       </div>
     </div>
@@ -851,6 +912,21 @@ function hideResult(id){
   $(id).classList.remove('visible');
 }
 
+/* === COST ESTIMATOR === */
+function showCost(calcType,quantity,priceFieldId){
+  var costEl=$('cost-'+calcType);
+  var priceEl=$(priceFieldId);
+  if(!costEl||!priceEl)return;
+  var price=parseFloat(priceEl.value);
+  if(isNaN(price)||price<=0){
+    costEl.style.display='none';
+    return;
+  }
+  var total=round(quantity*price,2);
+  $('cost-'+calcType+'-value').textContent='$'+total.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  costEl.style.display='block';
+}
+
 /* === STORAGE === */
 function storageGet(key,def){
   try{var v=localStorage.getItem('buildcalc_'+key);return v!==null?JSON.parse(v):def;}
@@ -1021,6 +1097,7 @@ function calcTile(){
     '<span>Tile size: '+escapeHtml(tl)+' \u00D7 '+escapeHtml(tw)+' cm ('+escapeHtml(round(tileArea,4))+' m\u00B2 each)</span>'+
     '<span>Without waste: '+escapeHtml(Math.ceil(tilesExact))+' tiles | With '+escapeHtml(waste)+'% waste: '+escapeHtml(tilesWithWaste)+' tiles</span>'
   );
+  showCost('tile',tilesWithWaste,'tile-price');
   addHistory({calculator_type:'tile',inputs_summary:rl+'x'+rw+' '+unitLabel(unit)+', tile '+tl+'x'+tw+'cm',result:tilesWithWaste+' tiles',fields:{'tile-area-l':rl,'tile-area-w':rw,'tile-size-l':tl,'tile-size-w':tw,'tile-unit':unit,'tile-waste':waste}});
   showSaveForm('tile');
 }
@@ -1061,6 +1138,7 @@ function calcPaint(){
     '<span>Coverage per can: '+escapeHtml(coverage)+' m\u00B2</span>'
   );
   lastPaintResult={cans:cans,netAreaM:round(netAreaM),coats:coats};
+  showCost('paint',cans,'paint-price');
   addHistory({calculator_type:'paint',inputs_summary:l+'x'+w+'x'+h+' '+unitLabel(unit)+', '+coats+' coat(s)',result:cans+' can'+(cans!==1?'s':''),fields:{'paint-length':l,'paint-width':w,'paint-height':h,'paint-unit':unit,'paint-doors':doors,'paint-windows':windows,'paint-coats':coats,'paint-coverage':$('paint-coverage').value}});
   showSaveForm('paint');
 }
@@ -1107,6 +1185,7 @@ function calcFloor(){
     '<span>Total coverage: '+escapeHtml(round(packs*packSize))+' m\u00B2 (surplus: '+escapeHtml(round(packs*packSize-areaM))+' m\u00B2)</span>'
   );
   lastFloorResult={packs:packs,areaM:round(areaM),packSize:packSize};
+  showCost('floor',packs,'floor-price');
   addHistory({calculator_type:'floor',inputs_summary:l+'x'+w+' '+unitLabel(unit)+', '+packSize+' m\u00B2/pack',result:packs+' pack'+(packs!==1?'s':''),fields:{'floor-length':l,'floor-width':w,'floor-unit':unit,'floor-packsize':packVal,'floor-direction':direction,'floor-extra-waste':extraWaste}});
   showSaveForm('floor');
 }
@@ -1153,6 +1232,7 @@ function calcConcrete(){
     '<span>Total: '+escapeHtml(round(volume,3))+' m\u00B3 | Bags needed: '+escapeHtml(bags)+' ('+escapeHtml(bagSize)+' m\u00B3 each)</span>'
   );
   lastConcreteResult={volume:round(volume,3),bags:bags,bagSize:bagSize};
+  showCost('concrete',bags,'conc-price');
   addHistory({calculator_type:'concrete',inputs_summary:l+'x'+w+'x'+t+' '+unitLabel(unit),result:round(volume,3)+' m\u00B3, '+bags+' bags',fields:{'conc-length':l,'conc-width':w,'conc-thick':t,'conc-unit':unit,'conc-bag':$('conc-bag').value,'conc-spillage':$('conc-spillage').checked}});
   showSaveForm('concrete');
 }
@@ -1524,6 +1604,27 @@ function copyShopping(){
     }
   }
 }
+function shareShopping(){
+  var list=getShoppingList();
+  if(list.length===0){showToast('Shopping list is empty');return;}
+  var text=list.map(function(item){
+    return '\u25A1 '+item.quantity+' '+item.unit+' of '+item.name;
+  }).join('\n');
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){showToast('Copied!');},function(){showToast('Could not copy');});
+  }else{
+    try{
+      var ta=document.createElement('textarea');
+      ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+      document.body.appendChild(ta);ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('Copied!');
+    }catch(ex){
+      showToast('Clipboard not available');
+    }
+  }
+}
 function renderShopping(){
   var list=getShoppingList();
   var section=$('shopping-section');
@@ -1557,6 +1658,7 @@ function initShopping(){
       $('shopping-section').classList.toggle('open');
     }
   });
+  $('shopping-share').addEventListener('click',shareShopping);
   $('shopping-copy').addEventListener('click',copyShopping);
   $('shopping-clear').addEventListener('click',clearShopping);
   $('shopping-items').addEventListener('click',function(e){
@@ -1592,6 +1694,19 @@ function initShopping(){
     if(!lastConcreteResult)return;
     addShoppingItem('Concrete bags ('+lastConcreteResult.volume+' m\u00B3)',lastConcreteResult.bags,'bag'+(lastConcreteResult.bags>1?'s':''));
     animateAddBtn(this);
+  });
+}
+
+/* === MEASURE GUIDE === */
+function initMeasureGuide(){
+  $('measure-guide-toggle').addEventListener('click',function(){
+    $('measure-guide').classList.toggle('open');
+  });
+  $('measure-guide-toggle').addEventListener('keydown',function(e){
+    if(e.key==='Enter'||e.key===' '){
+      e.preventDefault();
+      $('measure-guide').classList.toggle('open');
+    }
   });
 }
 
@@ -1635,6 +1750,7 @@ function init(){
   initProjects();
   initHistory();
   initShopping();
+  initMeasureGuide();
   initFieldErrorClear();
   initCopyButtons();
   initUnitPreferences();
