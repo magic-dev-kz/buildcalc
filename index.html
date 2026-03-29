@@ -1,0 +1,1517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="description" content="Free construction calculator. No subscriptions, no ads. Calculate tiles, paint, flooring, concrete and more.">
+<meta name="theme-color" content="#C05A18">
+<link rel="manifest" href="manifest.json">
+<title>BuildCalc — Free Construction Calculator</title>
+<meta property="og:title" content="BuildCalc — Construction Calculator">
+<meta property="og:description" content="Calculate materials for your renovation: tiles, paint, flooring, concrete. Free, offline, no ads.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="BuildCalc — Construction Calculator">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#FDF6F0;--bg-card:#FFFFFF;--bg-input:#F5EDE6;
+  --text:#2C1810;--text-secondary:#6B4F3A;--text-muted:#7A6A58;
+  --accent:#C05A18;--accent-hover:#A84E14;--accent-light:#FFF0E6;
+  --success:#2E7D50;--success-light:#E8F5ED;
+  --border:#E0D4C8;--shadow:0 2px 12px rgba(44,24,16,0.08);
+  --shadow-lg:0 8px 32px rgba(44,24,16,0.12);
+  --radius:16px;--radius-sm:10px;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  --transition:0.2s ease;
+}
+[data-theme="dark"]{
+  --bg:#1A1210;--bg-card:#2C2220;--bg-input:#3A2E28;
+  --text:#F0E6DE;--text-secondary:#C0A890;--text-muted:#B8A898;
+  --accent:#C86020;--accent-hover:#D87030;--accent-light:#3A2818;
+  --success:#48A86C;--success-light:#1A3028;
+  --border:#4A3830;--shadow:0 2px 12px rgba(0,0,0,0.3);
+  --shadow-lg:0 8px 32px rgba(0,0,0,0.4);
+}
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.5;min-height:100vh;transition:background var(--transition),color var(--transition)}
+a{color:var(--accent);text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;font-size:inherit}
+input,select{font-family:inherit;font-size:inherit}
+
+/* HEADER */
+.header{position:sticky;top:0;z-index:100;background:var(--bg-card);border-bottom:1px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.header-logo{display:flex;align-items:center;gap:10px}
+.header-logo svg{width:32px;height:32px}
+.header-logo h1{font-size:1.25rem;font-weight:700;color:var(--accent)}
+.header-actions{display:flex;align-items:center;gap:8px}
+.icon-btn{width:44px;height:44px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:var(--text-secondary);transition:all var(--transition)}
+.icon-btn:hover,.icon-btn:focus-visible{background:var(--accent-light);color:var(--accent)}
+.icon-btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.icon-btn svg{width:22px;height:22px}
+
+/* MAIN LAYOUT */
+.main{max-width:800px;margin:0 auto;padding:16px}
+
+/* NAV TABS */
+.nav{display:flex;gap:8px;overflow-x:auto;padding:4px 0 16px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav-tab{flex-shrink:0;display:flex;align-items:center;gap:6px;padding:10px 18px;border-radius:var(--radius);font-size:0.9rem;font-weight:600;color:var(--text-secondary);background:var(--bg-card);border:1px solid var(--border);transition:all var(--transition);white-space:nowrap}
+.nav-tab:hover{border-color:var(--accent);color:var(--accent)}
+.nav-tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.nav-tab[aria-selected="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+.nav-tab .tab-icon{font-size:1.1rem}
+
+/* CARDS */
+.card{background:var(--bg-card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);padding:24px;margin-bottom:20px;transition:all var(--transition);animation:fadeIn 0.3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.card-title{font-size:1.1rem;font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.card-subtitle{font-size:0.85rem;color:var(--text-muted);margin-bottom:20px}
+
+/* FORM ELEMENTS */
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:0.85rem;font-weight:600;color:var(--text-secondary);margin-bottom:6px}
+.form-input{width:100%;height:52px;padding:0 16px;background:var(--bg-input);border:2px solid transparent;border-radius:var(--radius-sm);color:var(--text);font-size:1.1rem;font-weight:500;transition:all var(--transition)}
+.form-input:focus{outline:none;border-color:var(--accent);background:var(--bg-card)}
+.form-input::placeholder{color:var(--text-muted)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M6 8L1 3h10z' fill='%237A6A58'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 16px center;padding-right:40px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:52px;padding:0 28px;border-radius:var(--radius-sm);font-size:1rem;font-weight:700;transition:all var(--transition)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn-primary{background:var(--accent);color:#fff;width:100%}
+.btn-primary:hover{background:var(--accent-hover);transform:translateY(-1px);box-shadow:0 4px 16px rgba(192,90,24,0.3)}
+.btn-primary:active{transform:translateY(0)}
+.btn-secondary{background:var(--bg-input);color:var(--text-secondary);border:1px solid var(--border)}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent)}
+
+/* RESULT */
+.result{margin-top:20px;padding:20px;background:var(--success-light);border-radius:var(--radius-sm);border:1px solid var(--success);display:none;animation:fadeIn 0.3s ease}
+.result.visible{display:block}
+.result-label{font-size:0.85rem;font-weight:600;color:var(--success);margin-bottom:4px}
+.result-value{font-size:1.8rem;font-weight:800;color:var(--success)}
+.result-detail{font-size:0.9rem;color:var(--text-secondary);margin-top:8px;line-height:1.6}
+.result-detail span{display:block}
+
+/* UNIT CONVERTER GRID */
+.converter-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:end}
+.converter-swap{width:44px;height:52px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;background:var(--bg-input);color:var(--text-secondary);border:1px solid var(--border);transition:all var(--transition);margin-bottom:0}
+.converter-swap:hover{background:var(--accent-light);color:var(--accent);border-color:var(--accent)}
+
+/* PROJECTS PANEL */
+.projects-panel{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);animation:fadeIn 0.2s ease}
+.projects-panel.visible{display:flex;align-items:flex-end;justify-content:center}
+.projects-sheet{background:var(--bg-card);border-radius:var(--radius) var(--radius) 0 0;width:100%;max-width:800px;max-height:80vh;overflow-y:auto;padding:24px;animation:slideUp 0.3s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.projects-sheet-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.projects-sheet-header h2{font-size:1.1rem;font-weight:700}
+.project-item{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--bg-input);border-radius:var(--radius-sm);margin-bottom:8px;transition:all var(--transition)}
+.project-item:hover{background:var(--accent-light)}
+.project-item-info h3{font-size:0.95rem;font-weight:600}
+.project-item-info p{font-size:0.8rem;color:var(--text-muted);margin-top:2px}
+.project-item-actions{display:flex;gap:4px}
+.project-item-actions button{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);transition:all var(--transition)}
+.project-item-actions button:hover{background:var(--bg-card);color:var(--accent)}
+.no-projects{text-align:center;padding:40px 20px;color:var(--text-muted)}
+.no-projects p{font-size:0.9rem}
+
+/* SAVE PROJECT FORM */
+.save-form{display:none;margin-top:16px;padding:16px;background:var(--bg-input);border-radius:var(--radius-sm)}
+.save-form.visible{display:block}
+.save-form .form-row{margin-top:10px}
+
+/* ONBOARDING */
+.onboarding{position:fixed;inset:0;z-index:1000;background:rgba(26,18,16,0.92);backdrop-filter:blur(16px);display:flex;align-items:center;justify-content:center;animation:fadeIn 0.4s ease}
+.onboarding-content{text-align:center;max-width:400px;padding:40px 24px;color:#fff}
+.onboarding-logo{width:80px;height:80px;margin:0 auto 24px}
+.onboarding-content h1{font-size:2rem;font-weight:800;margin-bottom:8px}
+.onboarding-content p{font-size:1.05rem;color:rgba(255,255,255,0.7);margin-bottom:36px;line-height:1.6}
+.onboarding-features{display:flex;flex-direction:column;gap:20px;margin-bottom:40px;text-align:left}
+.onboarding-feature{display:flex;align-items:center;gap:14px}
+.onboarding-feature-icon{width:48px;height:48px;border-radius:12px;background:rgba(232,114,42,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.4rem}
+.onboarding-feature h3{font-size:0.95rem;font-weight:600;color:#fff}
+.onboarding-feature p{font-size:0.82rem;color:rgba(255,255,255,0.6);margin-top:2px}
+.onboarding-cta{width:100%;height:56px;border-radius:var(--radius-sm);background:var(--accent);color:#fff;font-size:1.1rem;font-weight:700;transition:all var(--transition)}
+.onboarding-cta:hover{background:var(--accent-hover);transform:translateY(-2px);box-shadow:0 8px 24px rgba(192,90,24,0.4)}
+.onboarding-free{margin-top:16px;font-size:0.82rem;color:rgba(255,255,255,0.4)}
+
+/* FOOTER */
+.footer{text-align:center;padding:32px 20px;color:var(--text-muted);font-size:0.8rem;line-height:1.8}
+.footer a{color:var(--accent)}
+
+/* L-SHAPE VISUAL */
+.lshape-visual{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;width:120px;height:120px;gap:2px;margin:0 auto 16px}
+.lshape-cell{background:var(--accent-light);border:2px dashed var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:0.65rem;font-weight:600;color:var(--accent)}
+.lshape-cell.empty{background:transparent;border-color:transparent}
+
+/* TOGGLE */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0}
+.toggle-row label{font-size:0.9rem;font-weight:600;color:var(--text-secondary)}
+.toggle{position:relative;width:52px;height:28px;flex-shrink:0}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-slider{position:absolute;inset:0;background:var(--border);border-radius:14px;transition:all var(--transition);cursor:pointer}
+.toggle-slider::after{content:'';position:absolute;width:22px;height:22px;border-radius:50%;background:#fff;top:3px;left:3px;transition:all var(--transition);box-shadow:0 1px 3px rgba(0,0,0,0.2)}
+.toggle input:checked+.toggle-slider{background:var(--accent)}
+.toggle input:checked+.toggle-slider::after{transform:translateX(24px)}
+.toggle input:focus-visible+.toggle-slider{outline:2px solid var(--accent);outline-offset:2px}
+
+/* RESPONSIVE */
+@media(max-width:480px){
+  .main{padding:12px}
+  .card{padding:18px}
+  .form-row,.form-row-3{grid-template-columns:1fr}
+  .converter-grid{grid-template-columns:1fr;gap:8px}
+  .converter-swap{width:100%;height:40px}
+  .result-value{font-size:1.5rem}
+  .header{padding:10px 14px}
+}
+@media(min-width:600px){
+  .form-row-3{grid-template-columns:1fr 1fr 1fr}
+}
+
+/* HIDDEN SECTIONS */
+.calc-section{display:none}
+.calc-section.active{display:block}
+
+/* SKIP LINK */
+.skip-link{position:absolute;top:-100%;left:16px;background:var(--accent);color:#fff;padding:8px 16px;border-radius:var(--radius-sm);z-index:9999;font-weight:600}
+.skip-link:focus{top:8px}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--bg-card);color:var(--text);padding:14px 24px;border-radius:var(--radius-sm);box-shadow:var(--shadow-lg);font-size:0.9rem;font-weight:600;z-index:300;transition:transform 0.3s ease;border:1px solid var(--border)}
+.toast.visible{transform:translateX(-50%) translateY(0)}
+
+/* FIELD ERROR */
+.form-input--error{border-color:#D04040!important;background:rgba(208,64,64,0.06)!important}
+
+/* COPY BUTTON */
+.result-header{display:flex;align-items:center;justify-content:space-between}
+.copy-btn{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;font-size:0.78rem;font-weight:600;border-radius:6px;background:var(--bg-input);color:var(--text-secondary);border:1px solid var(--border);cursor:pointer;transition:all var(--transition)}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+
+/* SHOPPING LIST */
+.shopping-section{margin-bottom:20px}
+.shopping-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:all var(--transition);user-select:none}
+.shopping-header:hover{border-color:var(--accent)}
+.shopping-header h2{font-size:1rem;font-weight:700;display:flex;align-items:center;gap:8px}
+.shopping-header .badge{background:var(--accent);color:#fff;font-size:0.7rem;padding:2px 8px;border-radius:10px;font-weight:700}
+.shopping-header .chevron{transition:transform var(--transition);color:var(--text-muted)}
+.shopping-section.open .shopping-header .chevron{transform:rotate(180deg)}
+.shopping-body{display:none;background:var(--bg-card);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--radius) var(--radius);padding:16px 20px;animation:fadeIn 0.2s ease}
+.shopping-section.open .shopping-body{display:block}
+.shopping-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.shopping-item:last-child{border-bottom:none}
+.shopping-item input[type="checkbox"]{width:20px;height:20px;accent-color:var(--accent);flex-shrink:0;cursor:pointer}
+.shopping-item.checked .shopping-item-text{text-decoration:line-through;opacity:0.5}
+.shopping-item-text{flex:1;font-size:0.9rem;font-weight:500}
+.shopping-item-qty{font-size:0.85rem;color:var(--text-secondary);font-weight:600;white-space:nowrap}
+.shopping-item-del{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);transition:all var(--transition);flex-shrink:0}
+.shopping-item-del:hover{background:rgba(208,64,64,0.1);color:#D04040}
+.shopping-actions{display:flex;gap:8px;margin-top:12px}
+.shopping-actions button{flex:1}
+.no-shopping{text-align:center;padding:20px;color:var(--text-muted);font-size:0.85rem}
+
+/* ADD TO SHOPPING BTN */
+.btn-add-shopping{margin-top:10px;height:42px;padding:0 18px;font-size:0.85rem;background:var(--accent-light);color:var(--accent);border:1px solid var(--accent);border-radius:var(--radius-sm);font-weight:600;width:100%;transition:all var(--transition)}
+.btn-add-shopping:hover{background:var(--accent);color:#fff}
+
+/* HISTORY SECTION */
+.history-section{margin-top:8px;margin-bottom:20px}
+.history-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.history-header h2{font-size:1rem;font-weight:700;color:var(--text-secondary)}
+.history-clear{font-size:0.8rem;font-weight:600;color:var(--text-muted);padding:6px 12px;border-radius:6px;border:1px solid var(--border);transition:all var(--transition)}
+.history-clear:hover{border-color:#D04040;color:#D04040}
+.history-item{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;cursor:pointer;transition:all var(--transition)}
+.history-item:hover{border-color:var(--accent);background:var(--accent-light)}
+.history-item-icon{font-size:1.2rem;flex-shrink:0}
+.history-item-info{flex:1;min-width:0}
+.history-item-info h3{font-size:0.9rem;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.history-item-info p{font-size:0.78rem;color:var(--text-muted);margin-top:2px}
+.history-item-result{font-size:0.9rem;font-weight:700;color:var(--success);white-space:nowrap}
+.no-history{text-align:center;padding:24px;color:var(--text-muted);font-size:0.85rem}
+
+/* REDUCED MOTION */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important}
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#main-content">Skip to content</a>
+
+<!-- HEADER -->
+<header class="header" role="banner">
+  <div class="header-logo">
+    <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="2" y="14" width="28" height="16" rx="3" fill="#E8722A"/><rect x="6" y="18" width="8" height="4" rx="1" fill="#fff" opacity="0.9"/><rect x="18" y="18" width="8" height="4" rx="1" fill="#fff" opacity="0.9"/><path d="M8 14V6a2 2 0 012-2h12a2 2 0 012 2v8" stroke="#E8722A" stroke-width="2.5" fill="none"/><circle cx="16" cy="9" r="2" fill="#E8722A"/></svg>
+    <h1>BuildCalc</h1>
+  </div>
+  <div class="header-actions">
+    <button class="icon-btn" id="btn-projects" aria-label="Saved projects" title="Saved projects">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>
+    </button>
+    <button class="icon-btn" id="btn-theme" aria-label="Toggle dark mode" title="Toggle dark mode">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="theme-icon"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- MAIN -->
+<main class="main" id="main-content">
+  <!-- NAV TABS -->
+  <nav class="nav" role="tablist" aria-label="Calculator types">
+    <button class="nav-tab" role="tab" aria-selected="true" tabindex="0" data-tab="area" id="tab-area" aria-controls="section-area"><span class="tab-icon" aria-hidden="true">&#x1F4D0;</span> Area</button>
+    <button class="nav-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="tile" id="tab-tile" aria-controls="section-tile"><span class="tab-icon" aria-hidden="true">&#x1F9F1;</span> Tile</button>
+    <button class="nav-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="paint" id="tab-paint" aria-controls="section-paint"><span class="tab-icon" aria-hidden="true">&#x1FAA3;</span> Paint</button>
+    <button class="nav-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="floor" id="tab-floor" aria-controls="section-floor"><span class="tab-icon" aria-hidden="true">&#x1FAB5;</span> Flooring</button>
+    <button class="nav-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="concrete" id="tab-concrete" aria-controls="section-concrete"><span class="tab-icon" aria-hidden="true">&#x1F9F1;</span> Concrete</button>
+    <button class="nav-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="convert" id="tab-convert" aria-controls="section-convert"><span class="tab-icon" aria-hidden="true">&#x1F504;</span> Convert</button>
+  </nav>
+
+  <!-- SHOPPING LIST -->
+  <div class="shopping-section" id="shopping-section" style="display:none">
+    <div class="shopping-header" id="shopping-toggle">
+      <h2>&#x1F6D2; Shopping List <span class="badge" id="shopping-count">0</span></h2>
+      <svg class="chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="shopping-body">
+      <div id="shopping-items"></div>
+      <div class="shopping-actions">
+        <button class="btn btn-secondary" id="shopping-copy">&#x1F4CB; Copy List</button>
+        <button class="btn btn-secondary" id="shopping-clear" style="color:#D04040">&#x1F5D1; Clear All</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AREA CALCULATOR -->
+  <section class="calc-section active" id="section-area" role="tabpanel" aria-labelledby="tab-area">
+    <div class="card">
+      <div class="card-title">Room Area</div>
+      <div class="card-subtitle">Calculate area for rectangular or L-shaped rooms</div>
+
+      <div class="toggle-row">
+        <label for="area-lshape">L-shaped room</label>
+        <div class="toggle">
+          <input type="checkbox" id="area-lshape" aria-label="Toggle L-shaped room">
+          <span class="toggle-slider" role="presentation"></span>
+        </div>
+      </div>
+
+      <div id="area-rect-fields">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="area-length">Length</label>
+            <input class="form-input" type="number" id="area-length" placeholder="e.g. 5.0" min="0" step="0.01" inputmode="decimal">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="area-width">Width</label>
+            <input class="form-input" type="number" id="area-width" placeholder="e.g. 4.0" min="0" step="0.01" inputmode="decimal">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="area-unit">Unit</label>
+          <select class="form-input" id="area-unit"><option value="m">Meters</option><option value="ft">Feet</option></select>
+        </div>
+      </div>
+
+      <div id="area-lshape-fields" style="display:none">
+        <div class="lshape-visual" aria-hidden="true">
+          <div class="lshape-cell">A</div><div class="lshape-cell">B</div>
+          <div class="lshape-cell">C</div><div class="lshape-cell empty"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="area-l-totalw">Total Width (A+B)</label>
+            <input class="form-input" type="number" id="area-l-totalw" placeholder="e.g. 6.0" min="0" step="0.01" inputmode="decimal">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="area-l-totalh">Total Height (A+C)</label>
+            <input class="form-input" type="number" id="area-l-totalh" placeholder="e.g. 5.0" min="0" step="0.01" inputmode="decimal">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="area-l-cutw">Cutout Width (B)</label>
+            <input class="form-input" type="number" id="area-l-cutw" placeholder="e.g. 3.0" min="0" step="0.01" inputmode="decimal">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="area-l-cuth">Cutout Height</label>
+            <input class="form-input" type="number" id="area-l-cuth" placeholder="e.g. 2.5" min="0" step="0.01" inputmode="decimal">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="area-l-unit">Unit</label>
+          <select class="form-input" id="area-l-unit"><option value="m">Meters</option><option value="ft">Feet</option></select>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" id="calc-area">Calculate Area</button>
+      <div class="result" id="result-area" aria-live="polite">
+        <div class="result-header"><div class="result-label">Total Area</div><button class="copy-btn" data-copy="area" aria-label="Copy result">Copy</button></div>
+        <div class="result-value" id="result-area-value"></div>
+        <div class="result-detail" id="result-area-detail"></div>
+      </div>
+    </div>
+    <div class="save-form" id="save-form-area">
+      <div class="form-group">
+        <label class="form-label" for="save-area-name">Project Name</label>
+        <input class="form-input" type="text" id="save-area-name" placeholder="e.g. Kitchen renovation" maxlength="100">
+      </div>
+      <button class="btn btn-primary" id="save-area-btn">Save Project</button>
+    </div>
+  </section>
+
+  <!-- TILE CALCULATOR -->
+  <section class="calc-section" id="section-tile" role="tabpanel" aria-labelledby="tab-tile">
+    <div class="card">
+      <div class="card-title">Tile Calculator</div>
+      <div class="card-subtitle">How many tiles you need + 10% waste</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="tile-area-l">Room Length</label>
+          <input class="form-input" type="number" id="tile-area-l" placeholder="e.g. 5.0" min="0" step="0.01" inputmode="decimal">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="tile-area-w">Room Width</label>
+          <input class="form-input" type="number" id="tile-area-w" placeholder="e.g. 4.0" min="0" step="0.01" inputmode="decimal">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="tile-size-l">Tile Length (cm)</label>
+          <input class="form-input" type="number" id="tile-size-l" placeholder="e.g. 60" min="0" step="0.1" inputmode="decimal">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="tile-size-w">Tile Width (cm)</label>
+          <input class="form-input" type="number" id="tile-size-w" placeholder="e.g. 60" min="0" step="0.1" inputmode="decimal">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="tile-unit">Room Unit</label>
+          <select class="form-input" id="tile-unit"><option value="m">Meters</option><option value="ft">Feet</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="tile-waste">Waste %</label>
+          <input class="form-input" type="number" id="tile-waste" value="10" min="0" max="50" step="1" inputmode="numeric">
+        </div>
+      </div>
+      <button class="btn btn-primary" id="calc-tile">Calculate Tiles</button>
+      <div class="result" id="result-tile" aria-live="polite">
+        <div class="result-header"><div class="result-label">Tiles Needed</div><button class="copy-btn" data-copy="tile" aria-label="Copy result">Copy</button></div>
+        <div class="result-value" id="result-tile-value"></div>
+        <div class="result-detail" id="result-tile-detail"></div>
+        <button class="btn-add-shopping" id="add-shopping-tile">&#x1F6D2; Add to Shopping List</button>
+      </div>
+    </div>
+    <div class="save-form" id="save-form-tile">
+      <div class="form-group">
+        <label class="form-label" for="save-tile-name">Project Name</label>
+        <input class="form-input" type="text" id="save-tile-name" placeholder="e.g. Bathroom tiles" maxlength="100">
+      </div>
+      <button class="btn btn-primary" id="save-tile-btn">Save Project</button>
+    </div>
+  </section>
+
+  <!-- PAINT CALCULATOR -->
+  <section class="calc-section" id="section-paint" role="tabpanel" aria-labelledby="tab-paint">
+    <div class="card">
+      <div class="card-title">Paint Calculator</div>
+      <div class="card-subtitle">Wall area minus doors & windows = cans of paint</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="paint-length">Room Length</label>
+          <input class="form-input" type="number" id="paint-length" placeholder="e.g. 5.0" min="0" step="0.01" inputmode="decimal">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="paint-width">Room Width</label>
+          <input class="form-input" type="number" id="paint-width" placeholder="e.g. 4.0" min="0" step="0.01" inputmode="decimal">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="paint-height">Wall Height</label>
+          <input class="form-input" type="number" id="paint-height" placeholder="e.g. 2.7" min="0" step="0.01" inputmode="decimal">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="paint-unit">Unit</label>
+          <select class="form-input" id="paint-unit"><option value="m">Meters</option><option value="ft">Feet</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="paint-doors">Number of Doors</label>
+          <input class="form-input" type="number" id="paint-doors" value="1" min="0" step="1" inputmode="numeric">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="paint-windows">Number of Windows</label>
+          <input class="form-input" type="number" id="paint-windows" value="1" min="0" step="1" inputmode="numeric">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="paint-coats">Coats</label>
+          <select class="form-input" id="paint-coats"><option value="1">1 coat</option><option value="2" selected>2 coats</option><option value="3">3 coats</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="paint-coverage">Coverage per can</label>
+          <select class="form-input" id="paint-coverage">
+            <option value="10">10 m&sup2; (1L can)</option>
+            <option value="40" selected>40 m&sup2; (3.8L / 1gal)</option>
+            <option value="65">65 m&sup2; (5L can)</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="calc-paint">Calculate Paint</button>
+      <div class="result" id="result-paint" aria-live="polite">
+        <div class="result-header"><div class="result-label">Paint Needed</div><button class="copy-btn" data-copy="paint" aria-label="Copy result">Copy</button></div>
+        <div class="result-value" id="result-paint-value"></div>
+        <div class="result-detail" id="result-paint-detail"></div>
+        <button class="btn-add-shopping" id="add-shopping-paint">&#x1F6D2; Add to Shopping List</button>
+      </div>
+    </div>
+    <div class="save-form" id="save-form-paint">
+      <div class="form-group">
+        <label class="form-label" for="save-paint-name">Project Name</label>
+        <input class="form-input" type="text" id="save-paint-name" placeholder="e.g. Living room paint" maxlength="100">
+      </div>
+      <button class="btn btn-primary" id="save-paint-btn">Save Project</button>
+    </div>
+  </section>
+
+  <!-- FLOORING CALCULATOR -->
+  <section class="calc-section" id="section-floor" role="tabpanel" aria-labelledby="tab-floor">
+    <div class="card">
+      <div class="card-title">Flooring Calculator</div>
+      <div class="card-subtitle">Laminate, hardwood, or vinyl plank packs</div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="floor-length">Room Length</label>
+          <input class="form-input" type="number" id="floor-length" placeholder="e.g. 5.0" min="0" step="0.01" inputmode="decimal">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="floor-width">Room Width</label>
+          <input class="form-input" type="number" id="floor-width" placeholder="e.g. 4.0" min="0" step="0.01" inputmode="decimal">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="floor-unit">Unit</label>
+          <select class="form-input" id="floor-unit"><option value="m">Meters</option><option value="ft">Feet</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="floor-packsize">Pack Coverage</label>
+          <select class="form-input" id="floor-packsize">
+            <option value="1.98">1.98 m&sup2; (standard)</option>
+            <option value="2.22">2.22 m&sup2;</option>
+            <option value="2.47" selected>2.47 m&sup2;</option>
+            <option value="3.0">3.00 m&sup2;</option>
+            <option value="custom">Custom...</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group" id="floor-custom-group" style="display:none">
+        <label class="form-label" for="floor-custom-pack">Custom Pack Coverage (m&sup2;)</label>
+        <input class="form-input" type="number" id="floor-custom-pack" placeholder="e.g. 2.5" min="0" step="0.01" inputmode="decimal">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="floor-direction">Laying Direction</label>
+          <select class="form-input" id="floor-direction"><option value="straight">Straight (5% waste)</option><option value="diagonal">Diagonal (15% waste)</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="floor-extra-waste">Extra Waste %</label>
+          <input class="form-input" type="number" id="floor-extra-waste" value="0" min="0" max="30" step="1" inputmode="numeric">
+        </div>
+      </div>
+      <button class="btn btn-primary" id="calc-floor">Calculate Packs</button>
+      <div class="result" id="result-floor" aria-live="polite">
+        <div class="result-header"><div class="result-label">Flooring Packs</div><button class="copy-btn" data-copy="floor" aria-label="Copy result">Copy</button></div>
+        <div class="result-value" id="result-floor-value"></div>
+        <div class="result-detail" id="result-floor-detail"></div>
+        <button class="btn-add-shopping" id="add-shopping-floor">&#x1F6D2; Add to Shopping List</button>
+      </div>
+    </div>
+    <div class="save-form" id="save-form-floor">
+      <div class="form-group">
+        <label class="form-label" for="save-floor-name">Project Name</label>
+        <input class="form-input" type="text" id="save-floor-name" placeholder="e.g. Bedroom flooring" maxlength="100">
+      </div>
+      <button class="btn btn-primary" id="save-floor-btn">Save Project</button>
+    </div>
+  </section>
+
+  <!-- CONCRETE CALCULATOR -->
+  <section class="calc-section" id="section-concrete" role="tabpanel" aria-labelledby="tab-concrete">
+    <div class="card">
+      <div class="card-title">Concrete Calculator</div>
+      <div class="card-subtitle">Volume for slabs, footings, or pads</div>
+      <div class="form-row-3">
+        <div class="form-group">
+          <label class="form-label" for="conc-length">Length</label>
+          <input class="form-input" type="number" id="conc-length" placeholder="e.g. 6.0" min="0" step="0.01" inputmode="decimal">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="conc-width">Width</label>
+          <input class="form-input" type="number" id="conc-width" placeholder="e.g. 3.0" min="0" step="0.01" inputmode="decimal">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="conc-thick">Thickness</label>
+          <input class="form-input" type="number" id="conc-thick" placeholder="e.g. 0.15" min="0" step="0.001" inputmode="decimal">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="conc-unit">Unit</label>
+          <select class="form-input" id="conc-unit"><option value="m">Meters</option><option value="ft">Feet</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="conc-bag">Bag Size</label>
+          <select class="form-input" id="conc-bag">
+            <option value="0.015">20 kg (~0.015 m&sup3;)</option>
+            <option value="0.023">25 kg (~0.023 m&sup3;)</option>
+            <option value="0.030" selected>40 kg (~0.030 m&sup3;)</option>
+            <option value="0.042">50 kg (~0.042 m&sup3;)</option>
+            <option value="0.058">80 lb (~0.058 m&sup3;)</option>
+          </select>
+        </div>
+      </div>
+      <div class="toggle-row">
+        <label for="conc-spillage">Include 10% spillage</label>
+        <div class="toggle">
+          <input type="checkbox" id="conc-spillage" checked aria-label="Include spillage allowance">
+          <span class="toggle-slider" role="presentation"></span>
+        </div>
+      </div>
+      <button class="btn btn-primary" id="calc-concrete">Calculate Concrete</button>
+      <div class="result" id="result-concrete" aria-live="polite">
+        <div class="result-header"><div class="result-label">Concrete Volume</div><button class="copy-btn" data-copy="concrete" aria-label="Copy result">Copy</button></div>
+        <div class="result-value" id="result-concrete-value"></div>
+        <div class="result-detail" id="result-concrete-detail"></div>
+      </div>
+    </div>
+    <div class="save-form" id="save-form-concrete">
+      <div class="form-group">
+        <label class="form-label" for="save-concrete-name">Project Name</label>
+        <input class="form-input" type="text" id="save-concrete-name" placeholder="e.g. Patio slab" maxlength="100">
+      </div>
+      <button class="btn btn-primary" id="save-concrete-btn">Save Project</button>
+    </div>
+  </section>
+
+  <!-- UNIT CONVERTER -->
+  <section class="calc-section" id="section-convert" role="tabpanel" aria-labelledby="tab-convert">
+    <div class="card">
+      <div class="card-title">Unit Converter</div>
+      <div class="card-subtitle">Feet, meters, inches, cm, sq.ft, m&sup2;</div>
+      <div class="form-group">
+        <label class="form-label" for="conv-type">Conversion Type</label>
+        <select class="form-input" id="conv-type">
+          <option value="ft_m">Feet &harr; Meters</option>
+          <option value="in_cm">Inches &harr; Centimeters</option>
+          <option value="sqft_sqm">sq.ft &harr; m&sup2;</option>
+          <option value="yd_m">Yards &harr; Meters</option>
+          <option value="cuft_cum">cu.ft &harr; m&sup3;</option>
+        </select>
+      </div>
+      <div class="converter-grid">
+        <div class="form-group">
+          <label class="form-label" id="conv-from-label">Feet</label>
+          <input class="form-input" type="number" id="conv-from" placeholder="0" min="0" step="any" inputmode="decimal" aria-labelledby="conv-from-label">
+        </div>
+        <button class="converter-swap" id="conv-swap" aria-label="Swap units" title="Swap direction">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+        </button>
+        <div class="form-group">
+          <label class="form-label" id="conv-to-label">Meters</label>
+          <input class="form-input" type="number" id="conv-to" placeholder="0" min="0" step="any" inputmode="decimal" aria-labelledby="conv-to-label">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RECENT CALCULATIONS -->
+  <div class="history-section" id="history-section" style="display:none">
+    <div class="history-header">
+      <h2>Recent Calculations</h2>
+      <button class="history-clear" id="history-clear">Clear History</button>
+    </div>
+    <div id="history-list"></div>
+  </div>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  BuildCalc &mdash; Free forever. No subscriptions, no ads.<br>
+  Construction Master costs $36/year. BuildCalc costs $0.<br>
+  <small>Made with care for builders everywhere.</small>
+</footer>
+
+<!-- ONBOARDING OVERLAY -->
+<div class="onboarding" id="onboarding" role="dialog" aria-modal="true" aria-label="Welcome to BuildCalc" style="display:none">
+  <div class="onboarding-content">
+    <svg class="onboarding-logo" viewBox="0 0 80 80" fill="none" aria-hidden="true"><rect x="5" y="35" width="70" height="40" rx="8" fill="#E8722A"/><rect x="15" y="45" width="20" height="10" rx="3" fill="#fff" opacity="0.9"/><rect x="45" y="45" width="20" height="10" rx="3" fill="#fff" opacity="0.9"/><path d="M20 35V15a5 5 0 015-5h30a5 5 0 015 5v20" stroke="#E8722A" stroke-width="5" fill="none"/><circle cx="40" cy="22" r="5" fill="#E8722A"/></svg>
+    <h1>BuildCalc</h1>
+    <p>Free construction calculator.<br>No subscriptions, no ads, no BS.</p>
+    <div class="onboarding-features">
+      <div class="onboarding-feature">
+        <div class="onboarding-feature-icon" aria-hidden="true">&#x1F4D0;</div>
+        <div><h3>Calculate Materials</h3><p>Tile, paint, flooring, concrete &mdash; all in one place</p></div>
+      </div>
+      <div class="onboarding-feature">
+        <div class="onboarding-feature-icon" aria-hidden="true">&#x1F4BE;</div>
+        <div><h3>Save Projects</h3><p>Keep calculations for each room or job</p></div>
+      </div>
+      <div class="onboarding-feature">
+        <div class="onboarding-feature-icon" aria-hidden="true">&#x1F4F6;</div>
+        <div><h3>Works Offline</h3><p>No internet needed &mdash; use it anywhere on site</p></div>
+      </div>
+    </div>
+    <button class="onboarding-cta" id="onboarding-start">Start Building &#x2192;</button>
+    <div class="onboarding-free">Construction Master: $36/yr &bull; BuildCalc: $0. Forever.</div>
+  </div>
+</div>
+
+<!-- PROJECTS PANEL -->
+<div class="projects-panel" id="projects-panel" role="dialog" aria-modal="true" aria-label="Saved projects">
+  <div class="projects-sheet">
+    <div class="projects-sheet-header">
+      <h2>Saved Projects</h2>
+      <button class="icon-btn" id="close-projects" aria-label="Close projects panel">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div id="projects-list"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){'use strict';
+
+/* === UTILITIES === */
+function escapeHtml(s){
+  var d=document.createElement('div');
+  d.appendChild(document.createTextNode(String(s)));
+  return d.innerHTML.replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function $(id){return document.getElementById(id)}
+function q(sel){return document.querySelector(sel)}
+function qa(sel){return document.querySelectorAll(sel)}
+
+function round(n,d){d=d||2;return Math.round(n*Math.pow(10,d))/Math.pow(10,d)}
+
+function toMeters(val,unit){
+  if(unit==='ft')return val*0.3048;
+  return val;
+}
+function toSqMeters(val,unit){
+  if(unit==='ft')return val*0.092903;
+  return val;
+}
+function unitLabel(unit,sq){
+  if(sq)return unit==='ft'?'sq.ft':'m\u00B2';
+  return unit==='ft'?'ft':'m';
+}
+
+function getNum(id){
+  var el=$(id);
+  var raw=el.value.trim();
+  if(raw==='')return null;
+  var v=parseFloat(raw);
+  if(isNaN(v)||v<0)return null;
+  return v;
+}
+
+function requirePositive(id){
+  var v=getNum(id);
+  if(v===null||v<=0){
+    markError(id);
+    return null;
+  }
+  return v;
+}
+
+function markError(id){
+  var el=$(id);
+  el.classList.add('form-input--error');
+}
+
+function clearErrors(ids){
+  ids.forEach(function(id){
+    var el=$(id);
+    if(el)el.classList.remove('form-input--error');
+  });
+}
+
+function initFieldErrorClear(){
+  qa('.form-input').forEach(function(el){
+    el.addEventListener('input',function(){
+      this.classList.remove('form-input--error');
+    });
+  });
+}
+
+function focusFirstError(ids){
+  for(var i=0;i<ids.length;i++){
+    var el=$(ids[i]);
+    if(el&&el.classList.contains('form-input--error')){el.focus();return;}
+  }
+}
+
+function showResult(id,value,detail){
+  var el=$(id);
+  el.classList.add('visible');
+  $(id+'-value').textContent=value;
+  $(id+'-detail').innerHTML=detail||'';
+}
+
+function hideResult(id){
+  $(id).classList.remove('visible');
+}
+
+/* === STORAGE === */
+function storageGet(key,def){
+  try{var v=localStorage.getItem('buildcalc_'+key);return v!==null?JSON.parse(v):def;}
+  catch(e){return def;}
+}
+function storageSet(key,val){
+  try{localStorage.setItem('buildcalc_'+key,JSON.stringify(val));}
+  catch(e){/* quota exceeded */}
+}
+
+/* === TOAST === */
+var toastTimer=null;
+function showToast(msg){
+  var t=$('toast');
+  t.textContent=msg;
+  t.classList.add('visible');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(function(){t.classList.remove('visible');},2500);
+}
+
+/* === THEME === */
+function initTheme(){
+  var saved=storageGet('theme','light');
+  if(saved==='dark')document.documentElement.setAttribute('data-theme','dark');
+  updateThemeIcon();
+}
+function toggleTheme(){
+  var isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  if(isDark){document.documentElement.removeAttribute('data-theme');storageSet('theme','light');}
+  else{document.documentElement.setAttribute('data-theme','dark');storageSet('theme','dark');}
+  updateThemeIcon();
+}
+function updateThemeIcon(){
+  var isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  var icon=$('theme-icon');
+  if(isDark){
+    icon.innerHTML='<path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>';
+  }else{
+    icon.innerHTML='<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+  }
+}
+
+/* === TAB NAVIGATION === */
+function initTabs(){
+  var tabs=qa('.nav-tab');
+  tabs.forEach(function(tab){
+    tab.addEventListener('click',function(){switchTab(this.getAttribute('data-tab'));});
+    tab.addEventListener('keydown',function(e){
+      var idx=Array.from(tabs).indexOf(this);
+      if(e.key==='ArrowRight'&&idx<tabs.length-1){e.preventDefault();tabs[idx+1].focus();tabs[idx+1].click();}
+      if(e.key==='ArrowLeft'&&idx>0){e.preventDefault();tabs[idx-1].focus();tabs[idx-1].click();}
+    });
+  });
+}
+function switchTab(tabId){
+  qa('.nav-tab').forEach(function(t){t.setAttribute('aria-selected','false');t.setAttribute('tabindex','-1');});
+  qa('.calc-section').forEach(function(s){s.classList.remove('active');});
+  var tab=$('tab-'+tabId);
+  var section=$('section-'+tabId);
+  if(tab){tab.setAttribute('aria-selected','true');tab.setAttribute('tabindex','0');}
+  if(section)section.classList.add('active');
+  storageSet('lastTab',tabId);
+}
+
+/* === ONBOARDING === */
+function closeOnboarding(){
+  $('onboarding').style.display='none';
+  storageSet('onboarding_done',true);
+  $('tab-area').focus();
+}
+function initOnboarding(){
+  if(!storageGet('onboarding_done',false)){
+    $('onboarding').style.display='flex';
+    $('onboarding-start').focus();
+  }
+  $('onboarding-start').addEventListener('click',closeOnboarding);
+  // Escape closes onboarding
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'&&$('onboarding').style.display==='flex'){
+      closeOnboarding();
+    }
+  });
+  // Focus trap within onboarding
+  $('onboarding').addEventListener('keydown',function(e){
+    if(e.key!=='Tab')return;
+    var focusable=$('onboarding').querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    if(focusable.length===0)return;
+    var first=focusable[0],last=focusable[focusable.length-1];
+    if(e.shiftKey){
+      if(document.activeElement===first){e.preventDefault();last.focus();}
+    }else{
+      if(document.activeElement===last){e.preventDefault();first.focus();}
+    }
+  });
+}
+
+/* === AREA CALCULATOR === */
+function initArea(){
+  $('area-lshape').addEventListener('change',function(){
+    $('area-rect-fields').style.display=this.checked?'none':'block';
+    $('area-lshape-fields').style.display=this.checked?'block':'none';
+    hideResult('result-area');
+  });
+  $('calc-area').addEventListener('click',calcArea);
+}
+var lastAreaResult=null;
+function calcArea(){
+  var isL=$('area-lshape').checked;
+  if(!isL){
+    var fields=['area-length','area-width'];
+    clearErrors(fields);
+    var l=requirePositive('area-length'),w=requirePositive('area-width');
+    if(l===null||w===null){showToast('Value must be greater than 0');focusFirstError(fields);return;}
+    var unit=$('area-unit').value;
+    var area=l*w;
+    var areaM=unit==='ft'?toSqMeters(area,'ft'):area;
+    var areaSqFt=unit==='m'?area/0.092903:area;
+    lastAreaResult={type:'area',name:'Room Area',area:round(area),unit:unit};
+    showResult('result-area',
+      round(area)+' '+unitLabel(unit,true),
+      '<span>'+escapeHtml(round(areaM))+' m\u00B2 | '+escapeHtml(round(areaSqFt))+' sq.ft</span>'
+    );
+    addHistory({calculator_type:'area',inputs_summary:l+' x '+w+' '+unitLabel(unit),result:round(area)+' '+unitLabel(unit,true),fields:{'area-length':l,'area-width':w,'area-unit':unit,'area-lshape':false}});
+    showSaveForm('area');
+  }else{
+    var fields=['area-l-totalw','area-l-totalh','area-l-cutw','area-l-cuth'];
+    clearErrors(fields);
+    var tw=requirePositive('area-l-totalw'),th=requirePositive('area-l-totalh'),cw=requirePositive('area-l-cutw'),ch=requirePositive('area-l-cuth');
+    if(tw===null||th===null||cw===null||ch===null){showToast('Value must be greater than 0');focusFirstError(fields);return;}
+    if(cw>=tw||ch>=th){showToast('Cutout must be smaller than total');return;}
+    var unit=$('area-l-unit').value;
+    var area=tw*th-cw*ch;
+    var areaM=unit==='ft'?toSqMeters(area,'ft'):area;
+    var areaSqFt=unit==='m'?area/0.092903:area;
+    lastAreaResult={type:'area',name:'L-Shape Area',area:round(area),unit:unit};
+    showResult('result-area',
+      round(area)+' '+unitLabel(unit,true),
+      '<span>Full: '+escapeHtml(round(tw*th))+' '+escapeHtml(unitLabel(unit,true))+' \u2212 Cutout: '+escapeHtml(round(cw*ch))+' '+escapeHtml(unitLabel(unit,true))+'</span>'+
+      '<span>'+escapeHtml(round(areaM))+' m\u00B2 | '+escapeHtml(round(areaSqFt))+' sq.ft</span>'
+    );
+    addHistory({calculator_type:'area',inputs_summary:'L-shape '+tw+'x'+th+' cut '+cw+'x'+ch+' '+unitLabel(unit),result:round(area)+' '+unitLabel(unit,true),fields:{'area-lshape':true,'area-l-totalw':tw,'area-l-totalh':th,'area-l-cutw':cw,'area-l-cuth':ch,'area-l-unit':unit}});
+    showSaveForm('area');
+  }
+}
+
+/* === TILE CALCULATOR === */
+function initTile(){
+  $('calc-tile').addEventListener('click',calcTile);
+}
+var lastTileResult=null;
+function calcTile(){
+  var fields=['tile-area-l','tile-area-w','tile-size-l','tile-size-w'];
+  clearErrors(fields);
+  var rl=requirePositive('tile-area-l'),rw=requirePositive('tile-area-w'),tl=requirePositive('tile-size-l'),tw=requirePositive('tile-size-w');
+  if(rl===null||rw===null||tl===null||tw===null){showToast('Value must be greater than 0');focusFirstError(fields);return;}
+  var waste=getNum('tile-waste');
+  if(waste===null)waste=10;
+  var unit=$('tile-unit').value;
+  var roomArea=rl*rw;
+  var roomAreaM=unit==='ft'?toSqMeters(roomArea,'ft'):roomArea;
+  var tileArea=(tl/100)*(tw/100);
+  var tilesExact=roomAreaM/tileArea;
+  var tilesWithWaste=Math.ceil(tilesExact*(1+waste/100));
+  lastTileResult={tiles:tilesWithWaste,tl:tl,tw:tw,roomAreaM:round(roomAreaM),waste:waste};
+  showResult('result-tile',
+    escapeHtml(tilesWithWaste)+' tiles',
+    '<span>Room area: '+escapeHtml(round(roomAreaM))+' m\u00B2</span>'+
+    '<span>Tile size: '+escapeHtml(tl)+' \u00D7 '+escapeHtml(tw)+' cm ('+escapeHtml(round(tileArea,4))+' m\u00B2 each)</span>'+
+    '<span>Without waste: '+escapeHtml(Math.ceil(tilesExact))+' tiles | With '+escapeHtml(waste)+'% waste: '+escapeHtml(tilesWithWaste)+' tiles</span>'
+  );
+  addHistory({calculator_type:'tile',inputs_summary:rl+'x'+rw+' '+unitLabel(unit)+', tile '+tl+'x'+tw+'cm',result:tilesWithWaste+' tiles',fields:{'tile-area-l':rl,'tile-area-w':rw,'tile-size-l':tl,'tile-size-w':tw,'tile-unit':unit,'tile-waste':waste}});
+  showSaveForm('tile');
+}
+
+/* === PAINT CALCULATOR === */
+function initPaint(){
+  $('calc-paint').addEventListener('click',calcPaint);
+}
+var lastPaintResult=null;
+function calcPaint(){
+  var fields=['paint-length','paint-width','paint-height'];
+  clearErrors(fields);
+  var l=requirePositive('paint-length'),w=requirePositive('paint-width'),h=requirePositive('paint-height');
+  if(l===null||w===null||h===null){showToast('Value must be greater than 0');focusFirstError(fields);return;}
+  var unit=$('paint-unit').value;
+  var doors=getNum('paint-doors');if(doors===null)doors=0;
+  var windows=getNum('paint-windows');if(windows===null)windows=0;
+  var coats=parseInt($('paint-coats').value);
+  var coverage=parseFloat($('paint-coverage').value);
+
+  var perimeter=2*(l+w);
+  var wallArea=perimeter*h;
+  // Standard door: 2.0x0.8m = 1.6m2, window: 1.2x1.0m = 1.2m2
+  var doorAreaM=unit==='ft'?17.22:1.6; // sq.ft or m2
+  var windowAreaM=unit==='ft'?12.92:1.2;
+  var subtract=doors*doorAreaM+windows*windowAreaM;
+  var netArea=Math.max(wallArea-subtract,0);
+  var netAreaM=unit==='ft'?toSqMeters(netArea,'ft'):netArea;
+  var totalArea=netAreaM*coats;
+  var cans=Math.ceil(totalArea/coverage);
+
+  showResult('result-paint',
+    escapeHtml(cans)+' can'+(cans!==1?'s':''),
+    '<span>Wall perimeter: '+escapeHtml(round(perimeter))+' '+escapeHtml(unitLabel(unit))+'</span>'+
+    '<span>Gross wall area: '+escapeHtml(round(wallArea))+' '+escapeHtml(unitLabel(unit,true))+'</span>'+
+    '<span>Minus '+escapeHtml(doors)+' door(s) + '+escapeHtml(windows)+' window(s): \u2212'+escapeHtml(round(subtract))+' '+escapeHtml(unitLabel(unit,true))+'</span>'+
+    '<span>Net paintable area: '+escapeHtml(round(netAreaM))+' m\u00B2 \u00D7 '+escapeHtml(coats)+' coat(s) = '+escapeHtml(round(totalArea))+' m\u00B2</span>'+
+    '<span>Coverage per can: '+escapeHtml(coverage)+' m\u00B2</span>'
+  );
+  lastPaintResult={cans:cans,netAreaM:round(netAreaM),coats:coats};
+  addHistory({calculator_type:'paint',inputs_summary:l+'x'+w+'x'+h+' '+unitLabel(unit)+', '+coats+' coat(s)',result:cans+' can'+(cans!==1?'s':''),fields:{'paint-length':l,'paint-width':w,'paint-height':h,'paint-unit':unit,'paint-doors':doors,'paint-windows':windows,'paint-coats':coats,'paint-coverage':$('paint-coverage').value}});
+  showSaveForm('paint');
+}
+
+/* === FLOORING CALCULATOR === */
+function initFloor(){
+  $('floor-packsize').addEventListener('change',function(){
+    $('floor-custom-group').style.display=this.value==='custom'?'block':'none';
+  });
+  $('calc-floor').addEventListener('click',calcFloor);
+}
+var lastFloorResult=null;
+function calcFloor(){
+  var fields=['floor-length','floor-width'];
+  clearErrors(fields);
+  var l=requirePositive('floor-length'),w=requirePositive('floor-width');
+  if(l===null||w===null){showToast('Value must be greater than 0');focusFirstError(fields);return;}
+  var unit=$('floor-unit').value;
+  var packVal=$('floor-packsize').value;
+  var packSize;
+  if(packVal==='custom'){
+    clearErrors(['floor-custom-pack']);
+    packSize=requirePositive('floor-custom-pack');
+    if(packSize===null){showToast('Value must be greater than 0');focusFirstError(['floor-custom-pack']);return;}
+  }else{
+    packSize=parseFloat(packVal);
+  }
+  var direction=$('floor-direction').value;
+  var extraWaste=getNum('floor-extra-waste');if(extraWaste===null)extraWaste=0;
+  var baseWaste=direction==='diagonal'?15:5;
+  var totalWaste=baseWaste+extraWaste;
+
+  var area=l*w;
+  var areaM=unit==='ft'?toSqMeters(area,'ft'):area;
+  var areaWithWaste=areaM*(1+totalWaste/100);
+  var packs=Math.ceil(areaWithWaste/packSize);
+
+  showResult('result-floor',
+    escapeHtml(packs)+' pack'+(packs!==1?'s':''),
+    '<span>Room area: '+escapeHtml(round(areaM))+' m\u00B2</span>'+
+    '<span>Waste: '+escapeHtml(totalWaste)+'% ('+escapeHtml(baseWaste)+'% '+escapeHtml(direction)+' + '+escapeHtml(extraWaste)+'% extra)</span>'+
+    '<span>Area with waste: '+escapeHtml(round(areaWithWaste))+' m\u00B2</span>'+
+    '<span>Pack coverage: '+escapeHtml(packSize)+' m\u00B2 per pack</span>'+
+    '<span>Total coverage: '+escapeHtml(round(packs*packSize))+' m\u00B2 (surplus: '+escapeHtml(round(packs*packSize-areaM))+' m\u00B2)</span>'
+  );
+  lastFloorResult={packs:packs,areaM:round(areaM),packSize:packSize};
+  addHistory({calculator_type:'floor',inputs_summary:l+'x'+w+' '+unitLabel(unit)+', '+packSize+' m\u00B2/pack',result:packs+' pack'+(packs!==1?'s':''),fields:{'floor-length':l,'floor-width':w,'floor-unit':unit,'floor-packsize':packVal,'floor-direction':direction,'floor-extra-waste':extraWaste}});
+  showSaveForm('floor');
+}
+
+/* === CONCRETE CALCULATOR === */
+function initConcrete(){
+  $('calc-concrete').addEventListener('click',calcConcrete);
+}
+var lastConcreteResult=null;
+function calcConcrete(){
+  var fields=['conc-length','conc-width','conc-thick'];
+  clearErrors(fields);
+  var l=requirePositive('conc-length'),w=requirePositive('conc-width'),t=requirePositive('conc-thick');
+  if(l===null||w===null||t===null){showToast('Value must be greater than 0');focusFirstError(fields);return;}
+  var unit=$('conc-unit').value;
+  var lm=toMeters(l,unit),wm=toMeters(w,unit),tm=toMeters(t,unit);
+  var volumeRaw=lm*wm*tm;
+  var spillage=$('conc-spillage').checked?0.10:0;
+  var volume=volumeRaw*(1+spillage);
+  var volumeCuFt=volume*35.3147;
+  var bagSize=parseFloat($('conc-bag').value);
+  var bags=Math.ceil(volume/bagSize);
+  var spillageNote=spillage>0?
+    '<span>Spillage allowance: +10% ('+escapeHtml(round(volumeRaw*spillage,3))+' m\u00B3)</span>':'';
+
+  showResult('result-concrete',
+    escapeHtml(round(volume,3))+' m\u00B3',
+    '<span>Dimensions: '+escapeHtml(round(lm,2))+' \u00D7 '+escapeHtml(round(wm,2))+' \u00D7 '+escapeHtml(round(tm,3))+' m</span>'+
+    '<span>Net volume: '+escapeHtml(round(volumeRaw,3))+' m\u00B3 ('+escapeHtml(round(volumeRaw*35.3147,2))+' cu.ft)</span>'+
+    spillageNote+
+    '<span>Total: '+escapeHtml(round(volume,3))+' m\u00B3 | Bags needed: '+escapeHtml(bags)+' ('+escapeHtml(bagSize)+' m\u00B3 each)</span>'
+  );
+  lastConcreteResult={volume:round(volume,3),bags:bags,bagSize:bagSize};
+  addHistory({calculator_type:'concrete',inputs_summary:l+'x'+w+'x'+t+' '+unitLabel(unit),result:round(volume,3)+' m\u00B3, '+bags+' bags',fields:{'conc-length':l,'conc-width':w,'conc-thick':t,'conc-unit':unit,'conc-bag':$('conc-bag').value,'conc-spillage':$('conc-spillage').checked}});
+  showSaveForm('concrete');
+}
+
+/* === UNIT CONVERTER === */
+var conversionFactors={
+  ft_m:{forward:0.3048,from:'Feet',to:'Meters',dp:4},
+  in_cm:{forward:2.54,from:'Inches',to:'Centimeters',dp:3},
+  sqft_sqm:{forward:0.092903,from:'sq.ft',to:'m\u00B2',dp:4},
+  yd_m:{forward:0.9144,from:'Yards',to:'Meters',dp:4},
+  cuft_cum:{forward:0.0283168,from:'cu.ft',to:'m\u00B3',dp:5}
+};
+var convDirection='forward'; // or 'reverse'
+
+function initConvert(){
+  $('conv-type').addEventListener('change',updateConvLabels);
+  $('conv-from').addEventListener('input',convertFrom);
+  $('conv-to').addEventListener('input',convertTo);
+  $('conv-swap').addEventListener('click',swapConv);
+  updateConvLabels();
+}
+function updateConvLabels(){
+  var c=conversionFactors[$('conv-type').value];
+  if(convDirection==='forward'){
+    $('conv-from-label').textContent=c.from;
+    $('conv-to-label').textContent=c.to;
+  }else{
+    $('conv-from-label').textContent=c.to;
+    $('conv-to-label').textContent=c.from;
+  }
+  $('conv-from').value='';
+  $('conv-to').value='';
+}
+function convertFrom(){
+  var v=parseFloat($('conv-from').value);
+  if(isNaN(v)){$('conv-to').value='';return;}
+  if(v<0){$('conv-to').value='';showToast('Value must be positive');return;}
+  var c=conversionFactors[$('conv-type').value];
+  var result=convDirection==='forward'?v*c.forward:v/c.forward;
+  $('conv-to').value=round(result,c.dp);
+}
+function convertTo(){
+  var v=parseFloat($('conv-to').value);
+  if(isNaN(v)){$('conv-from').value='';return;}
+  if(v<0){$('conv-from').value='';showToast('Value must be positive');return;}
+  var c=conversionFactors[$('conv-type').value];
+  var result=convDirection==='forward'?v/c.forward:v*c.forward;
+  $('conv-from').value=round(result,c.dp);
+}
+function swapConv(){
+  convDirection=convDirection==='forward'?'reverse':'forward';
+  var fromVal=$('conv-from').value;
+  $('conv-from').value=$('conv-to').value;
+  $('conv-to').value=fromVal;
+  var c=conversionFactors[$('conv-type').value];
+  if(convDirection==='forward'){
+    $('conv-from-label').textContent=c.from;
+    $('conv-to-label').textContent=c.to;
+  }else{
+    $('conv-from-label').textContent=c.to;
+    $('conv-to-label').textContent=c.from;
+  }
+}
+
+/* === PROJECTS (localStorage) === */
+function getProjects(){return storageGet('projects',[]);}
+function saveProject(proj){
+  var projects=getProjects();
+  proj.id=Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  proj.date=new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  projects.unshift(proj);
+  if(projects.length>50)projects=projects.slice(0,50);
+  storageSet('projects',projects);
+  showToast('Project saved!');
+  return proj;
+}
+function deleteProject(id){
+  if(!confirm('Delete this project?'))return;
+  var projects=getProjects().filter(function(p){return p.id!==id;});
+  storageSet('projects',projects);
+  renderProjects();
+  showToast('Project deleted');
+}
+
+function renderProjects(){
+  var projects=getProjects();
+  var el=$('projects-list');
+  if(projects.length===0){
+    el.innerHTML='<div class="no-projects"><p>No saved projects yet.<br>Calculate something and save it!</p></div>';
+    return;
+  }
+  el.innerHTML=projects.map(function(p){
+    return '<div class="project-item">'+
+      '<div class="project-item-info">'+
+        '<h3>'+escapeHtml(p.name||'Untitled')+'</h3>'+
+        '<p>'+escapeHtml(p.summary||p.type||'')+' &middot; '+escapeHtml(p.date||'')+'</p>'+
+      '</div>'+
+      '<div class="project-item-actions">'+
+        '<button class="delete-project-btn" data-id="'+escapeHtml(p.id)+'" aria-label="Delete project '+escapeHtml(p.name||'Untitled')+'" title="Delete">'+
+          '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>'+
+        '</button>'+
+      '</div>'+
+    '</div>';
+  }).join('');
+}
+
+function showSaveForm(calcType){
+  var form=$('save-form-'+calcType);
+  if(form)form.classList.add('visible');
+}
+
+function initProjects(){
+  $('btn-projects').addEventListener('click',function(){
+    renderProjects();
+    $('projects-panel').classList.add('visible');
+    $('close-projects').focus();
+  });
+  $('close-projects').addEventListener('click',function(){
+    $('projects-panel').classList.remove('visible');
+  });
+  $('projects-panel').addEventListener('click',function(e){
+    if(e.target===$('projects-panel'))$('projects-panel').classList.remove('visible');
+  });
+
+  // Event delegation for delete buttons
+  $('projects-list').addEventListener('click',function(e){
+    var btn=e.target.closest('.delete-project-btn');
+    if(btn)deleteProject(btn.dataset.id);
+  });
+
+  // Escape key closes panels
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){
+      $('projects-panel').classList.remove('visible');
+    }
+  });
+
+  // Save area project
+  $('save-area-btn').addEventListener('click',function(){
+    if(!lastAreaResult){showToast('Calculate first');return;}
+    var name=$('save-area-name').value.trim()||'Room Area';
+    saveProject({name:name,type:'Area',summary:lastAreaResult.area+' '+unitLabel(lastAreaResult.unit,true)});
+    $('save-form-area').classList.remove('visible');
+    $('save-area-name').value='';
+  });
+
+  // Save tile project
+  $('save-tile-btn').addEventListener('click',function(){
+    if(!lastTileResult){showToast('Calculate first');return;}
+    var name=$('save-tile-name').value.trim()||'Tile Calculation';
+    saveProject({name:name,type:'Tile',summary:lastTileResult.tiles+' tiles ('+lastTileResult.tl+'x'+lastTileResult.tw+'cm)'});
+    $('save-form-tile').classList.remove('visible');
+    $('save-tile-name').value='';
+  });
+
+  // Save paint project
+  $('save-paint-btn').addEventListener('click',function(){
+    if(!lastPaintResult){showToast('Calculate first');return;}
+    var name=$('save-paint-name').value.trim()||'Paint Calculation';
+    saveProject({name:name,type:'Paint',summary:lastPaintResult.cans+' can(s), '+lastPaintResult.netAreaM+' m\u00B2, '+lastPaintResult.coats+' coat(s)'});
+    $('save-form-paint').classList.remove('visible');
+    $('save-paint-name').value='';
+  });
+
+  // Save floor project
+  $('save-floor-btn').addEventListener('click',function(){
+    if(!lastFloorResult){showToast('Calculate first');return;}
+    var name=$('save-floor-name').value.trim()||'Flooring Calculation';
+    saveProject({name:name,type:'Floor',summary:lastFloorResult.packs+' packs ('+lastFloorResult.areaM+' m\u00B2)'});
+    $('save-form-floor').classList.remove('visible');
+    $('save-floor-name').value='';
+  });
+
+  // Save concrete project
+  $('save-concrete-btn').addEventListener('click',function(){
+    if(!lastConcreteResult){showToast('Calculate first');return;}
+    var name=$('save-concrete-name').value.trim()||'Concrete Calculation';
+    saveProject({name:name,type:'Concrete',summary:lastConcreteResult.volume+' m\u00B3, '+lastConcreteResult.bags+' bags'});
+    $('save-form-concrete').classList.remove('visible');
+    $('save-concrete-name').value='';
+  });
+}
+
+/* === COPY RESULT === */
+function initCopyButtons(){
+  document.addEventListener('click',function(e){
+    var btn=e.target.closest('.copy-btn');
+    if(!btn)return;
+    var type=btn.getAttribute('data-copy');
+    var val=$('result-'+type+'-value');
+    var detail=$('result-'+type+'-detail');
+    if(!val)return;
+    var text=val.textContent;
+    if(detail)text+='\n'+detail.textContent;
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(function(){
+        showToast('Copied to clipboard');
+      },function(){
+        showToast('Could not copy');
+      });
+    }else{
+      showToast('Clipboard not available');
+    }
+  });
+}
+
+/* === CALCULATION HISTORY === */
+var HISTORY_KEY='bc_history';
+var HISTORY_MAX=15;
+var historyIcons={area:'\uD83D\uDCD0',tile:'\uD83E\uDDF1',paint:'\uD83E\uDEA3',floor:'\uD83E\uDEB5',concrete:'\uD83E\uDDF1'};
+
+function getHistory(){
+  try{var v=localStorage.getItem(HISTORY_KEY);return v?JSON.parse(v):[];}
+  catch(e){return[];}
+}
+function saveHistory(list){
+  try{localStorage.setItem(HISTORY_KEY,JSON.stringify(list));}
+  catch(e){/* quota */}
+}
+function addHistory(entry){
+  var list=getHistory();
+  entry.timestamp=Date.now();
+  list.unshift(entry);
+  if(list.length>HISTORY_MAX)list=list.slice(0,HISTORY_MAX);
+  saveHistory(list);
+  renderHistory();
+}
+function clearHistory(){
+  try{localStorage.removeItem(HISTORY_KEY);}catch(e){}
+  renderHistory();
+  showToast('History cleared');
+}
+function renderHistory(){
+  var list=getHistory();
+  var section=$('history-section');
+  var el=$('history-list');
+  if(list.length===0){
+    section.style.display='none';
+    return;
+  }
+  section.style.display='block';
+  el.innerHTML=list.map(function(h,i){
+    var icon=historyIcons[h.calculator_type]||'\uD83D\uDCD0';
+    var ago=timeAgo(h.timestamp);
+    return '<div class="history-item" data-history-idx="'+i+'">'+
+      '<div class="history-item-icon">'+icon+'</div>'+
+      '<div class="history-item-info"><h3>'+escapeHtml(h.inputs_summary)+'</h3><p>'+escapeHtml(h.calculator_type)+' &middot; '+escapeHtml(ago)+'</p></div>'+
+      '<div class="history-item-result">'+escapeHtml(h.result)+'</div>'+
+    '</div>';
+  }).join('');
+}
+function timeAgo(ts){
+  var diff=Date.now()-ts;
+  var mins=Math.floor(diff/60000);
+  if(mins<1)return 'just now';
+  if(mins<60)return mins+'m ago';
+  var hrs=Math.floor(mins/60);
+  if(hrs<24)return hrs+'h ago';
+  var days=Math.floor(hrs/24);
+  return days+'d ago';
+}
+function restoreFromHistory(idx){
+  var list=getHistory();
+  var h=list[idx];
+  if(!h)return;
+  var t=h.calculator_type;
+  switchTab(t);
+  if(h.fields){
+    Object.keys(h.fields).forEach(function(id){
+      var el=$(id);
+      if(el){
+        if(el.type==='checkbox')el.checked=h.fields[id];
+        else el.value=h.fields[id];
+        // trigger change for selects/checkboxes
+        el.dispatchEvent(new Event('change'));
+      }
+    });
+  }
+  showToast('Loaded: '+h.inputs_summary);
+}
+function initHistory(){
+  renderHistory();
+  $('history-clear').addEventListener('click',clearHistory);
+  $('history-list').addEventListener('click',function(e){
+    var item=e.target.closest('.history-item');
+    if(!item)return;
+    var idx=parseInt(item.getAttribute('data-history-idx'));
+    restoreFromHistory(idx);
+  });
+}
+
+/* === SHOPPING LIST === */
+var SHOPPING_KEY='bc_shopping';
+
+function getShoppingList(){
+  try{var v=localStorage.getItem(SHOPPING_KEY);return v?JSON.parse(v):[];}
+  catch(e){return[];}
+}
+function saveShoppingList(list){
+  try{localStorage.setItem(SHOPPING_KEY,JSON.stringify(list));}
+  catch(e){/* quota */}
+}
+function addShoppingItem(name,quantity,unit){
+  var list=getShoppingList();
+  list.push({name:name,quantity:quantity,unit:unit,checked:false,id:Date.now().toString(36)+Math.random().toString(36).slice(2,5)});
+  saveShoppingList(list);
+  renderShopping();
+  showToast('Added to shopping list');
+}
+function toggleShoppingItem(id){
+  var list=getShoppingList();
+  list.forEach(function(item){if(item.id===id)item.checked=!item.checked;});
+  saveShoppingList(list);
+  renderShopping();
+}
+function deleteShoppingItem(id){
+  var list=getShoppingList().filter(function(item){return item.id!==id;});
+  saveShoppingList(list);
+  renderShopping();
+}
+function clearShopping(){
+  if(!confirm('Clear entire shopping list?'))return;
+  try{localStorage.removeItem(SHOPPING_KEY);}catch(e){}
+  renderShopping();
+  showToast('Shopping list cleared');
+}
+function copyShopping(){
+  var list=getShoppingList();
+  if(list.length===0){showToast('Shopping list is empty');return;}
+  var text='Shopping List:\n'+list.map(function(item){
+    return (item.checked?'[x] ':'[ ] ')+item.name+': '+item.quantity+' '+item.unit;
+  }).join('\n');
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(function(){showToast('List copied to clipboard');},function(){showToast('Could not copy');});
+  }else{showToast('Clipboard not available');}
+}
+function renderShopping(){
+  var list=getShoppingList();
+  var section=$('shopping-section');
+  var el=$('shopping-items');
+  var badge=$('shopping-count');
+  if(list.length===0){
+    section.style.display='none';
+    return;
+  }
+  section.style.display='block';
+  badge.textContent=list.length;
+  el.innerHTML=list.map(function(item){
+    return '<div class="shopping-item'+(item.checked?' checked':'')+'">'+
+      '<input type="checkbox" '+(item.checked?'checked':'')+' data-shop-id="'+escapeHtml(item.id)+'" aria-label="Mark '+escapeHtml(item.name)+' as bought">'+
+      '<span class="shopping-item-text">'+escapeHtml(item.name)+'</span>'+
+      '<span class="shopping-item-qty">'+escapeHtml(item.quantity)+' '+escapeHtml(item.unit)+'</span>'+
+      '<button class="shopping-item-del" data-shop-del="'+escapeHtml(item.id)+'" aria-label="Remove '+escapeHtml(item.name)+'">'+
+        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>'+
+      '</button>'+
+    '</div>';
+  }).join('');
+}
+function initShopping(){
+  renderShopping();
+  $('shopping-toggle').addEventListener('click',function(){
+    $('shopping-section').classList.toggle('open');
+  });
+  $('shopping-copy').addEventListener('click',copyShopping);
+  $('shopping-clear').addEventListener('click',clearShopping);
+  $('shopping-items').addEventListener('click',function(e){
+    var cb=e.target.closest('input[type="checkbox"]');
+    if(cb){toggleShoppingItem(cb.getAttribute('data-shop-id'));return;}
+    var del=e.target.closest('[data-shop-del]');
+    if(del)deleteShoppingItem(del.getAttribute('data-shop-del'));
+  });
+
+  // Add to Shopping List buttons
+  $('add-shopping-tile').addEventListener('click',function(){
+    if(!lastTileResult)return;
+    addShoppingItem('Tiles ('+lastTileResult.tl+'x'+lastTileResult.tw+'cm)',lastTileResult.tiles,'pcs');
+  });
+  $('add-shopping-paint').addEventListener('click',function(){
+    if(!lastPaintResult)return;
+    addShoppingItem('Paint ('+lastPaintResult.netAreaM+' m\u00B2, '+lastPaintResult.coats+' coat'+(lastPaintResult.coats>1?'s':'')+')',lastPaintResult.cans,'can'+(lastPaintResult.cans>1?'s':''));
+  });
+  $('add-shopping-floor').addEventListener('click',function(){
+    if(!lastFloorResult)return;
+    addShoppingItem('Flooring packs ('+lastFloorResult.areaM+' m\u00B2)',lastFloorResult.packs,'pack'+(lastFloorResult.packs>1?'s':''));
+  });
+}
+
+/* === INIT === */
+function init(){
+  initTheme();
+  initTabs();
+  initOnboarding();
+  initArea();
+  initTile();
+  initPaint();
+  initFloor();
+  initConcrete();
+  initConvert();
+  initProjects();
+  initHistory();
+  initShopping();
+  initFieldErrorClear();
+  initCopyButtons();
+  $('btn-theme').addEventListener('click',toggleTheme);
+
+  // Restore last tab
+  var lastTab=storageGet('lastTab',null);
+  if(lastTab)switchTab(lastTab);
+
+  // Enter key triggers calculate on focused section
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Enter'&&e.target.classList.contains('form-input')&&e.target.tagName==='INPUT'){
+      var section=e.target.closest('.calc-section');
+      if(section){
+        var btn=section.querySelector('.btn-primary');
+        if(btn)btn.click();
+      }
+    }
+  });
+
+  // Focus trap for projects panel
+  $('projects-panel').addEventListener('keydown',function(e){
+    if(e.key!=='Tab')return;
+    var panel=$('projects-panel');
+    if(!panel.classList.contains('visible'))return;
+    var focusable=panel.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+    if(focusable.length===0)return;
+    var first=focusable[0],last=focusable[focusable.length-1];
+    if(e.shiftKey){
+      if(document.activeElement===first){e.preventDefault();last.focus();}
+    }else{
+      if(document.activeElement===last){e.preventDefault();first.focus();}
+    }
+  });
+
+  // Register Service Worker
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('./sw.js').catch(function(){/* SW registration failed */});
+  }
+}
+
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',init);
+}else{
+  init();
+}
+
+})();
+</script>
+</body>
+</html>
