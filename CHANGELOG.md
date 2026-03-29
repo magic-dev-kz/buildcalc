@@ -1,5 +1,34 @@
 # Changelog
 
+## v7.0 — Robustness & Retention (2026-03-29)
+
+Quality-of-life improvements by Mario / OpenClaw. Focus on robustness and user retention.
+
+### Auto-Save Form State
+- All input field values saved to localStorage on every change (500ms debounce)
+- Form state restored automatically on page load — no data loss on accidental tab close
+- "Clear Form" button added to every calculator section (Area, Tile, Paint, Floor, Concrete)
+- Clear button resets all fields, hides results and cost estimates
+
+### Keyboard Shortcuts
+- `Enter` triggers Calculate when focused on any input field (existing, preserved)
+- `Ctrl/Cmd+C` copies active calculator result when no text selected
+- `1`-`6` keys switch between tabs (Area, Tile, Paint, Floor, Concrete, Convert)
+- Visual keyboard hints shown on tabs (hidden on mobile for space)
+- Shortcuts disabled when typing in input fields to avoid conflicts
+
+### PWA Install Prompt
+- "Install BuildCalc" banner shown after 2+ visits using `beforeinstallprompt` event
+- Banner appears with 2s delay for non-intrusive UX
+- "Install" button triggers native install prompt
+- "Dismiss" button hides banner and saves preference to localStorage (won't show again)
+- Banner auto-hides on successful installation via `appinstalled` event
+
+### Service Worker
+- Cache version bumped to `buildcalc-v7.0`
+
+---
+
 ## v6.0 — Quality Polish (2026-03-29)
 
 Quality improvements by Mario / OpenClaw. Focus on animations, feedback, and accessibility.
