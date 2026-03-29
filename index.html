@@ -419,6 +419,14 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
 .project-total-item-label{font-weight:600;color:var(--text-secondary)}
 .project-total-item-value{font-weight:800;color:var(--accent)}
 
+/* v13: SMART MATERIAL SUGGESTIONS */
+.material-suggestions{margin-top:16px;padding:14px 16px;background:var(--accent-light);border-radius:var(--radius-sm);border:1px solid rgba(212,98,26,0.18);animation:fadeIn 0.4s ease}
+.material-suggestions-title{font-size:0.78rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.material-suggestions-list{list-style:none;padding:0;margin:0}
+.material-suggestions-list li{font-size:0.85rem;color:var(--text-secondary);padding:3px 0;display:flex;align-items:center;gap:8px;line-height:1.5}
+.material-suggestions-list li::before{content:'\2022';color:var(--accent);font-weight:700;font-size:1.1em}
+[data-theme="dark"] .material-suggestions{border-color:rgba(224,112,48,0.2)}
+
 /* v12: SHARE PROJECT BUTTON */
 .btn-share-project{margin-top:12px;height:48px;padding:0 22px;font-size:0.9rem;background:var(--accent-gradient);color:#fff;border-radius:var(--radius-sm);font-weight:700;width:100%;transition:all var(--transition);box-shadow:0 4px 16px rgba(212,98,26,0.25);display:none}
 .btn-share-project:hover{background:var(--accent-gradient-hover);transform:translateY(-2px);box-shadow:0 8px 24px rgba(212,98,26,0.35)}
@@ -698,6 +706,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
         <div class="result-detail" id="result-tile-detail"></div>
         <div class="cost-estimate" id="cost-tile" style="display:none"><div class="cost-estimate-label">Estimated Cost</div><div class="cost-estimate-value" id="cost-tile-value"></div></div>
         <button class="btn-add-shopping" id="add-shopping-tile">&#x1F6D2; Add to Shopping List</button>
+        <div class="material-suggestions" id="suggestions-tile" style="display:none"></div>
       </div>
     </div>
     <div class="save-form" id="save-form-tile">
@@ -784,6 +793,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
         <div class="result-detail" id="result-paint-detail"></div>
         <div class="cost-estimate" id="cost-paint" style="display:none"><div class="cost-estimate-label">Estimated Cost</div><div class="cost-estimate-value" id="cost-paint-value"></div></div>
         <button class="btn-add-shopping" id="add-shopping-paint">&#x1F6D2; Add to Shopping List</button>
+        <div class="material-suggestions" id="suggestions-paint" style="display:none"></div>
       </div>
     </div>
     <div class="save-form" id="save-form-paint">
@@ -866,6 +876,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
         <div class="result-detail" id="result-floor-detail"></div>
         <div class="cost-estimate" id="cost-floor" style="display:none"><div class="cost-estimate-label">Estimated Cost</div><div class="cost-estimate-value" id="cost-floor-value"></div></div>
         <button class="btn-add-shopping" id="add-shopping-floor">&#x1F6D2; Add to Shopping List</button>
+        <div class="material-suggestions" id="suggestions-floor" style="display:none"></div>
       </div>
     </div>
     <div class="save-form" id="save-form-floor">
@@ -945,6 +956,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
         <div class="result-detail" id="result-concrete-detail"></div>
         <div class="cost-estimate" id="cost-concrete" style="display:none"><div class="cost-estimate-label">Estimated Cost</div><div class="cost-estimate-value" id="cost-concrete-value"></div></div>
         <button class="btn-add-shopping" id="add-shopping-concrete">&#x1F6D2; Add to Shopping List</button>
+        <div class="material-suggestions" id="suggestions-concrete" style="display:none"></div>
       </div>
     </div>
     <div class="save-form" id="save-form-concrete">
@@ -1017,8 +1029,9 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
 
 <!-- FOOTER -->
 <footer class="footer">
-  BuildCalc &mdash; Free forever. No subscriptions, no ads.<br>
+  BuildCalc v13 &mdash; Free forever. No subscriptions, no ads.<br>
   Construction Master costs $36/year. BuildCalc costs $0.<br>
+  <small>v13.0 &mdash; Smart Material Suggestions: auto-suggested supplies after each calculation.</small><br>
   <small>Made with care for builders everywhere.</small>
 </footer>
 
@@ -1383,6 +1396,7 @@ function calcTile(){
   showCost('tile',tileStock>0?tilesToBuy:tilesWithWaste,'tile-price');
   addHistory({calculator_type:'tile',inputs_summary:rl+'x'+rw+' '+unitLabel(unit)+', tile '+tl+'x'+tw+'cm',result:tilesWithWaste+' tiles',fields:{'tile-area-l':rl,'tile-area-w':rw,'tile-size-l':tl,'tile-size-w':tw,'tile-unit':unit,'tile-waste':waste}});
   showSaveForm('tile');
+  showSuggestions('tile',lastTileResult);
 }
 
 /* === PAINT CALCULATOR === */
@@ -1429,6 +1443,7 @@ function calcPaint(){
   showCost('paint',paintStock>0?cansToBuy:cans,'paint-price');
   addHistory({calculator_type:'paint',inputs_summary:l+'x'+w+'x'+h+' '+unitLabel(unit)+', '+coats+' coat(s)',result:cans+' can'+(cans!==1?'s':''),fields:{'paint-length':l,'paint-width':w,'paint-height':h,'paint-unit':unit,'paint-doors':doors,'paint-windows':windows,'paint-coats':coats,'paint-coverage':$('paint-coverage').value}});
   showSaveForm('paint');
+  showSuggestions('paint',lastPaintResult);
 }
 
 /* === FLOORING CALCULATOR === */
@@ -1481,6 +1496,7 @@ function calcFloor(){
   showCost('floor',floorStock>0?packsToBuy:packs,'floor-price');
   addHistory({calculator_type:'floor',inputs_summary:l+'x'+w+' '+unitLabel(unit)+', '+packSize+' m\u00B2/pack',result:packs+' pack'+(packs!==1?'s':''),fields:{'floor-length':l,'floor-width':w,'floor-unit':unit,'floor-packsize':packVal,'floor-direction':direction,'floor-extra-waste':extraWaste}});
   showSaveForm('floor');
+  showSuggestions('floor',lastFloorResult);
 }
 
 /* === CONCRETE CALCULATOR === */
@@ -1533,6 +1549,7 @@ function calcConcrete(){
   showCost('concrete',concStock>0?bagsToBuy:bags,'conc-price');
   addHistory({calculator_type:'concrete',inputs_summary:l+'x'+w+'x'+t+' '+unitLabel(unit),result:round(volume,3)+' m\u00B3, '+bags+' bags',fields:{'conc-length':l,'conc-width':w,'conc-thick':t,'conc-unit':unit,'conc-bag':$('conc-bag').value,'conc-spillage':$('conc-spillage').checked}});
   showSaveForm('concrete');
+  showSuggestions('concrete',lastConcreteResult);
 }
 
 /* === UNIT CONVERTER === */
@@ -1666,6 +1683,87 @@ function renderProjects(){
       '</div>'+
     '</div>';
   }).join('');
+}
+
+/* === v13: SMART MATERIAL SUGGESTIONS === */
+var materialSuggestions={
+  tile:function(data){
+    var area=data.roomAreaM||0;
+    var adhesiveKg=Math.ceil(area*5);
+    var groutKg=Math.ceil(area*0.5);
+    return{
+      title:'Also consider',
+      items:[
+        '~'+adhesiveKg+' kg tile adhesive (5 kg/m\u00B2)',
+        '~'+groutKg+' kg grout (0.5 kg/m\u00B2)',
+        'Tile spacers (cross-shaped)',
+        'Notched trowel & rubber float',
+        'Tile cutter or wet saw'
+      ]
+    };
+  },
+  paint:function(data){
+    var area=data.netAreaM||0;
+    var primerCans=Math.max(1,Math.ceil(area/12));
+    return{
+      title:'Also consider',
+      items:[
+        'Primer: ~'+primerCans+' can'+(primerCans!==1?'s':'')+' (12 m\u00B2/can)',
+        'Paint roller + tray',
+        'Painter\'s tape (masking)',
+        'Drop cloth / plastic sheeting',
+        'Angled brush for edges'
+      ]
+    };
+  },
+  floor:function(data){
+    var area=data.areaM||0;
+    var underlayRolls=Math.max(1,Math.ceil(area/15));
+    return{
+      title:'Also consider',
+      items:[
+        'Underlay: ~'+underlayRolls+' roll'+(underlayRolls!==1?'s':'')+' (15 m\u00B2/roll)',
+        'Transition strips / thresholds',
+        'Spacer wedges (10mm)',
+        'Pull bar & tapping block',
+        'Moisture barrier film'
+      ]
+    };
+  },
+  concrete:function(data){
+    var volume=data.volume||0;
+    var rebarKg=Math.ceil(volume*100);
+    return{
+      title:'Also consider',
+      items:[
+        'Rebar: ~'+rebarKg+' kg reinforcement steel',
+        'Formwork / shuttering boards',
+        'Concrete mixer or mixing tools',
+        'Vibrator for compaction',
+        'Curing compound or plastic sheeting'
+      ]
+    };
+  }
+};
+
+function showSuggestions(calcType,data){
+  var el=$('suggestions-'+calcType);
+  if(!el)return;
+  var db=materialSuggestions[calcType];
+  if(!db)return;
+  var info=db(data);
+  var html='<div class="material-suggestions-title">&#x1F4A1; '+escapeHtml(info.title)+'</div><ul class="material-suggestions-list">';
+  for(var i=0;i<info.items.length;i++){
+    html+='<li>'+escapeHtml(info.items[i])+'</li>';
+  }
+  html+='</ul>';
+  el.innerHTML=html;
+  el.style.display='block';
+}
+
+function hideSuggestions(calcType){
+  var el=$('suggestions-'+calcType);
+  if(el){el.style.display='none';el.innerHTML='';}
 }
 
 function showSaveForm(calcType){
@@ -2130,6 +2228,8 @@ function clearFormSection(sectionId){
   // Hide cost estimate
   var costEl=$('cost-'+sectionId);
   if(costEl)costEl.style.display='none';
+  // v13: Hide material suggestions
+  hideSuggestions(sectionId);
   scheduleAutoSave();
   showToast('Form cleared');
 }
