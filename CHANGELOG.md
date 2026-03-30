@@ -1,5 +1,10 @@
 # Changelog
 
+## v22.0 (2026-03-29) — Data Portability
+
+- **Export all projects/calculations as JSON backup**: "Export All Data" button exports saved projects, calculation history, shopping list, and current form state as a portable JSON file
+- SW cache bumped to `buildcalc-v22.0`
+
 ## v21.0 (2026-03-29) — Drywall Calculator + UX Polish (Leo + Molot)
 
 - **Remove tabGlowPulse** (Leo): Replaced pulsing glow animation on active tab with a static solid accent bottom border. Less distracting, cleaner look.
