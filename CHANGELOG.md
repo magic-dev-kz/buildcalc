@@ -1,5 +1,12 @@
 # Changelog
 
+
+## v23.0 (2026-03-29) — Deferred Font Loading
+
+- **Non-blocking Google Fonts**: Replaced render-blocking `@import` in inline CSS with `<link rel="preload" ... onload>` and `<noscript>` fallback — font CSS no longer blocks first paint
+- SW cache bumped to `buildcalc-v23.0`
+
+---
 ## v22.0 (2026-03-29) — Data Portability
 
 - **Export all projects/calculations as JSON backup**: "Export All Data" button exports saved projects, calculation history, shopping list, and current form state as a portable JSON file
