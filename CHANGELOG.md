@@ -1,5 +1,13 @@
 # Changelog
 
+## v21.0 (2026-03-29) — Drywall Calculator + UX Polish (Leo + Molot)
+
+- **Remove tabGlowPulse** (Leo): Replaced pulsing glow animation on active tab with a static solid accent bottom border. Less distracting, cleaner look.
+- **Tab scroll hint** (Leo): On mobile, a fade gradient with arrow hint appears on the right edge of the tab nav when more tabs are scrollable. Hides once scrolled to end.
+- **Simplify result animation** (Leo): Removed `resultPop`, `resultShine`, and `springPop` animations. Results now appear with a single 0.3s opacity fade-in.
+- **Drywall calculator** (Molot): New 7th tab. Inputs: wall area or room dimensions (length/width/height). Outputs: number of drywall sheets (3 sizes), screws (~28/sheet), joint compound (~0.34 kg/m2), joint tape (~1.2 m/m2). Supports metric/imperial, 10% waste toggle, cost estimate.
+- SW cache bumped to `buildcalc-v21.0`
+
 ## v20.0 (2026-03-29) — Print Styles Verified
 
 - **Print verification**: Existing `@media print` rules confirmed working — hides nav, buttons, overlays; shows calculator results with cost estimates; report header prints with branding; page breaks on cards

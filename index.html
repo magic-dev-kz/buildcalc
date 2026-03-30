@@ -73,14 +73,18 @@ input,select{font-family:inherit;font-size:inherit}
 .main{max-width:800px;margin:0 auto;padding:20px 16px}
 
 /* NAV TABS */
+.nav-wrap{position:relative}
 .nav{display:flex;gap:8px;overflow-x:auto;padding:4px 0 20px;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .nav::-webkit-scrollbar{display:none}
+.nav-scroll-hint{display:none;position:absolute;right:0;top:0;bottom:20px;width:48px;pointer-events:none;background:linear-gradient(to right,transparent,var(--bg));align-items:center;justify-content:flex-end;padding-right:4px;z-index:2}
+.nav-scroll-hint .hint-arrow{font-size:0.85rem;color:var(--text-muted);opacity:0.7;animation:hintPulse 1.5s ease-in-out infinite}
+@keyframes hintPulse{0%,100%{opacity:0.4;transform:translateX(0)}50%{opacity:1;transform:translateX(3px)}}
+@media(max-width:768px){.nav-scroll-hint.visible{display:flex}}
 .nav-tab{flex-shrink:0;display:flex;align-items:center;gap:8px;padding:11px 20px;border-radius:var(--radius);font-size:0.88rem;font-weight:600;color:var(--text-secondary);background:var(--bg-card);border:1.5px solid var(--border);transition:all var(--transition);white-space:nowrap;box-shadow:var(--shadow);position:relative;overflow:hidden;letter-spacing:-0.01em}
 .nav-tab::before{content:'';position:absolute;inset:0;background:var(--accent-gradient);opacity:0;transition:opacity var(--transition)}
 .nav-tab:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow-lg)}
 .nav-tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.nav-tab[aria-selected="true"]{background:var(--accent-gradient);color:#fff;border-color:transparent;box-shadow:0 4px 16px rgba(212,98,26,0.3),var(--shadow);transform:translateY(-1px);animation:tabGlowPulse 2.5s ease-in-out infinite}
-@keyframes tabGlowPulse{0%,100%{box-shadow:0 4px 16px rgba(212,98,26,0.3),var(--shadow)}50%{box-shadow:0 4px 20px rgba(212,98,26,0.45),0 0 12px rgba(232,114,42,0.2),var(--shadow)}}
+.nav-tab[aria-selected="true"]{background:var(--accent-gradient);color:#fff;border-color:transparent;box-shadow:0 4px 16px rgba(212,98,26,0.3),var(--shadow);transform:translateY(-1px);border-bottom:3px solid var(--accent)}
 .nav-tab[aria-selected="true"]::before{opacity:0}
 .nav-tab .tab-icon{font-size:1.35rem;filter:saturate(1.2);transition:transform var(--transition-spring)}
 .nav-tab:hover .tab-icon{transform:scale(1.2) rotate(-5deg)}
@@ -131,10 +135,8 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
 .calc-btns-row .btn-primary{flex:1}
 
 /* RESULT — celebration effect */
-.result{margin-top:24px;padding:24px;background:var(--success-light);border-radius:var(--radius);border:1.5px solid var(--success);display:none;animation:resultPop 0.5s cubic-bezier(0.34,1.56,0.64,1);position:relative;overflow:hidden}
-.result::before{content:'';position:absolute;top:-50%;right:-50%;width:100%;height:100%;background:radial-gradient(circle,rgba(29,140,82,0.08) 0%,transparent 70%);pointer-events:none;animation:resultShine 2s ease-out}
-@keyframes resultPop{from{opacity:0;transform:scale(0.92) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
-@keyframes resultShine{from{transform:translate(-30%,30%) scale(0.5);opacity:1}to{transform:translate(30%,-30%) scale(2);opacity:0}}
+.result{margin-top:24px;padding:24px;background:var(--success-light);border-radius:var(--radius);border:1.5px solid var(--success);display:none;animation:resultFadeIn 0.3s ease;position:relative;overflow:hidden}
+@keyframes resultFadeIn{from{opacity:0}to{opacity:1}}
 .result.visible{display:block}
 .result-label{font-size:0.82rem;font-weight:700;color:var(--success);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em}
 .result-value{font-size:2.4rem;font-weight:900;color:var(--success);letter-spacing:-0.03em;line-height:1.2}
@@ -355,11 +357,8 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
 .onboarding-cta:focus-visible,.room-preset-btn:focus-visible,
 .btn-share-project:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
-/* COUNTUP ANIMATION (v6) + SPRING POP (v9) */
-.result-value{transition:opacity 0.2s ease}
-@keyframes countPulse{0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
-.result-value.counting-done{animation:springPop 0.6s cubic-bezier(0.34,1.56,0.64,1)}
-@keyframes springPop{0%{transform:scale(0.8);opacity:0.5}30%{transform:scale(1.15)}55%{transform:scale(0.93)}75%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}
+/* COUNTUP ANIMATION (v6) */
+.result-value{transition:opacity 0.3s ease}
 
 /* CONFIRM DIALOG (v6) — replaces native confirm() */
 .confirm-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;animation:fadeIn 0.2s ease}
@@ -512,6 +511,7 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
 <!-- MAIN -->
 <main class="main" id="main-content">
   <!-- NAV TABS -->
+  <div class="nav-wrap">
   <nav class="nav" role="tablist" aria-label="Calculator types">
     <button class="nav-tab" role="tab" aria-selected="true" tabindex="0" data-tab="area" id="tab-area" aria-controls="section-area"><span class="tab-icon" aria-hidden="true">&#x1F4D0;</span> Area<span class="kbd-hint">1</span></button>
     <button class="nav-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="tile" id="tab-tile" aria-controls="section-tile"><span class="tab-icon" aria-hidden="true">&#x1F9F1;</span> Tile<span class="kbd-hint">2</span></button>
@@ -519,7 +519,10 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
     <button class="nav-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="floor" id="tab-floor" aria-controls="section-floor"><span class="tab-icon" aria-hidden="true">&#x1FAB5;</span> Flooring<span class="kbd-hint">4</span></button>
     <button class="nav-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="concrete" id="tab-concrete" aria-controls="section-concrete"><span class="tab-icon" aria-hidden="true">&#x1F9F1;</span> Concrete<span class="kbd-hint">5</span></button>
     <button class="nav-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="convert" id="tab-convert" aria-controls="section-convert"><span class="tab-icon" aria-hidden="true">&#x1F504;</span> Convert<span class="kbd-hint">6</span></button>
+    <button class="nav-tab" role="tab" aria-selected="false" tabindex="-1" data-tab="drywall" id="tab-drywall" aria-controls="section-drywall"><span class="tab-icon" aria-hidden="true">&#x1F9F1;</span> Drywall<span class="kbd-hint">7</span></button>
   </nav>
+  <div class="nav-scroll-hint" id="nav-scroll-hint"><span class="hint-arrow" aria-hidden="true">&rarr;</span></div>
+  </div>
 
   <!-- v8: PRINT REPORT HEADER (visible only when printing) -->
   <div class="print-report-header" id="print-report-header">
@@ -1050,6 +1053,97 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
     </div>
   </section>
 
+  <!-- DRYWALL CALCULATOR -->
+  <section class="calc-section" id="section-drywall" role="tabpanel" aria-labelledby="tab-drywall">
+    <div class="card">
+      <div class="card-title">Drywall Calculator</div>
+      <div class="card-subtitle">Sheets, screws and joint compound for walls &amp; ceilings</div>
+
+      <div class="toggle-row">
+        <label for="drywall-mode">Enter room dimensions instead of area</label>
+        <div class="toggle">
+          <input type="checkbox" id="drywall-mode" aria-label="Toggle room dimensions mode">
+          <span class="toggle-slider" role="presentation"></span>
+        </div>
+      </div>
+
+      <div id="drywall-area-fields">
+        <div class="form-group">
+          <label class="form-label" for="drywall-area">Wall Area</label>
+          <input class="form-input" type="number" id="drywall-area" placeholder="e.g. 45" min="0" step="0.01" inputmode="decimal">
+        </div>
+      </div>
+
+      <div id="drywall-room-fields" style="display:none">
+        <div class="form-row-3">
+          <div class="form-group">
+            <label class="form-label" for="drywall-length">Room Length</label>
+            <input class="form-input" type="number" id="drywall-length" placeholder="e.g. 5" min="0" step="0.01" inputmode="decimal">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="drywall-width">Room Width</label>
+            <input class="form-input" type="number" id="drywall-width" placeholder="e.g. 4" min="0" step="0.01" inputmode="decimal">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="drywall-height">Wall Height</label>
+            <input class="form-input" type="number" id="drywall-height" placeholder="e.g. 2.7" min="0" step="0.01" inputmode="decimal">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label" for="drywall-unit">Unit</label>
+          <div class="unit-select-wrap">
+            <select class="form-input" id="drywall-unit"><option value="m">Meters / m&sup2;</option><option value="ft">Feet / sq.ft</option></select>
+            <span class="unit-info-hint" tabindex="0" aria-label="Unit reference">?<span class="unit-info-tooltip">1 sheet = 4&times;8 ft (1.22&times;2.44 m) = 2.97 m&sup2;</span></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="drywall-sheet">Sheet Size</label>
+          <select class="form-input" id="drywall-sheet">
+            <option value="2.97">Standard 4&times;8 ft (2.97 m&sup2;)</option>
+            <option value="3.72">4&times;10 ft (3.72 m&sup2;)</option>
+            <option value="4.46">4&times;12 ft (4.46 m&sup2;)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="toggle-row">
+        <label for="drywall-waste">Include 10% waste</label>
+        <div class="toggle">
+          <input type="checkbox" id="drywall-waste" checked aria-label="Include waste allowance">
+          <span class="toggle-slider" role="presentation"></span>
+        </div>
+      </div>
+
+      <div class="price-group">
+        <label class="form-label" for="drywall-price">Price per sheet (optional)</label>
+        <input class="form-input" type="number" id="drywall-price" placeholder="e.g. 12.00" min="0" step="0.01" inputmode="decimal">
+      </div>
+
+      <div class="calc-btns-row">
+        <button class="btn btn-primary" id="calc-drywall">Calculate Drywall</button>
+        <button class="btn btn-undo" id="undo-drywall" aria-label="Undo last calculation"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10h10a5 5 0 015 5v0a5 5 0 01-5 5H8"/><polyline points="7 14 3 10 7 6"/></svg> Undo</button>
+      </div>
+      <button class="btn-clear-form" data-clear-section="drywall" type="button">Clear Form</button>
+      <div class="result" id="result-drywall" aria-live="polite">
+        <div class="result-header"><div class="result-label">Drywall Materials</div><button class="copy-btn" data-copy="drywall" aria-label="Copy result">Copy</button></div>
+        <div class="result-value" id="result-drywall-value"></div>
+        <div class="result-detail" id="result-drywall-detail"></div>
+        <div class="cost-estimate" id="cost-drywall" style="display:none"><div class="cost-estimate-label">Estimated Cost (sheets only)</div><div class="cost-estimate-value" id="cost-drywall-value"></div></div>
+        <button class="btn-add-shopping" id="add-shopping-drywall">&#x1F6D2; Add to Shopping List</button>
+      </div>
+    </div>
+    <div class="save-form" id="save-form-drywall">
+      <div class="form-group">
+        <label class="form-label" for="save-drywall-name">Project Name</label>
+        <input class="form-input" type="text" id="save-drywall-name" placeholder="e.g. Living room walls" maxlength="100">
+      </div>
+      <button class="btn btn-primary" id="save-drywall-btn">Save Project</button>
+    </div>
+  </section>
+
   <!-- RECENT CALCULATIONS -->
   <div class="history-section" id="history-section" style="display:none">
     <div class="history-header">
@@ -1080,9 +1174,9 @@ select.form-input{appearance:none;background-image:url("data:image/svg+xml,%3Csv
 
 <!-- FOOTER -->
 <footer class="footer">
-  BuildCalc v13 &mdash; Free forever. No subscriptions, no ads.<br>
+  BuildCalc v21 &mdash; Free forever. No subscriptions, no ads.<br>
   Construction Master costs $36/year. BuildCalc costs $0.<br>
-  <small>v13.0 &mdash; Smart Material Suggestions: auto-suggested supplies after each calculation.</small><br>
+  <small>v21.0 &mdash; Drywall calculator, simplified animations, mobile scroll hints.</small><br>
   <small>Made with care for builders everywhere.</small>
 </footer>
 
@@ -1258,7 +1352,6 @@ function showResult(id,value,detail){
     var decimals=(numMatch[1].indexOf('.')!==-1)?numMatch[1].split('.')[1].length:0;
     var startTime=null;
     var duration=800;
-    valEl.classList.remove('counting-done');
     function animate(ts){
       if(!startTime)startTime=ts;
       var progress=Math.min((ts-startTime)/duration,1);
@@ -1266,7 +1359,7 @@ function showResult(id,value,detail){
       var current=eased*finalNum;
       valEl.textContent=current.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g,',')+suffix;
       if(progress<1){requestAnimationFrame(animate);}
-      else{valEl.textContent=value;valEl.classList.add('counting-done');}
+      else{valEl.textContent=value;}
     }
     if(window.matchMedia('(prefers-reduced-motion:reduce)').matches){
       valEl.textContent=value;
@@ -1370,6 +1463,20 @@ function initTabs(){
       if(e.key==='ArrowLeft'&&idx>0){e.preventDefault();tabs[idx-1].focus();tabs[idx-1].click();}
     });
   });
+  // v21: Tab scroll hint
+  var navEl=document.querySelector('.nav');
+  var hintEl=$('nav-scroll-hint');
+  if(navEl&&hintEl){
+    function checkScroll(){
+      var canScroll=navEl.scrollWidth>navEl.clientWidth;
+      var atEnd=navEl.scrollLeft+navEl.clientWidth>=navEl.scrollWidth-8;
+      if(canScroll&&!atEnd){hintEl.classList.add('visible');}
+      else{hintEl.classList.remove('visible');}
+    }
+    navEl.addEventListener('scroll',checkScroll);
+    window.addEventListener('resize',checkScroll);
+    setTimeout(checkScroll,100);
+  }
 }
 function switchTab(tabId){
   qa('.nav-tab').forEach(function(t){t.setAttribute('aria-selected','false');t.setAttribute('tabindex','-1');});
@@ -1726,6 +1833,68 @@ function swapConv(){
   }
 }
 
+/* === DRYWALL CALCULATOR === */
+function initDrywall(){
+  $('drywall-mode').addEventListener('change',function(){
+    $('drywall-area-fields').style.display=this.checked?'none':'block';
+    $('drywall-room-fields').style.display=this.checked?'block':'none';
+    hideResult('result-drywall');
+  });
+  $('calc-drywall').addEventListener('click',calcDrywall);
+}
+var lastDrywallResult=null;
+function calcDrywall(){
+  var isRoom=$('drywall-mode').checked;
+  var unit=$('drywall-unit').value;
+  var areaSqM;
+
+  if(!isRoom){
+    var fields=['drywall-area'];
+    clearErrors(fields);
+    var a=requirePositive('drywall-area');
+    if(a===null){showToast('Value must be greater than 0');focusFirstError(fields);return;}
+    areaSqM=unit==='ft'?a*0.092903:a;
+  }else{
+    var fields=['drywall-length','drywall-width','drywall-height'];
+    clearErrors(fields);
+    var l=requirePositive('drywall-length'),w=requirePositive('drywall-width'),h=requirePositive('drywall-height');
+    if(l===null||w===null||h===null){showToast('Value must be greater than 0');focusFirstError(fields);return;}
+    var lm=toMeters(l,unit),wm=toMeters(w,unit),hm=toMeters(h,unit);
+    // Perimeter x height = wall area
+    areaSqM=2*(lm+wm)*hm;
+  }
+
+  var waste=$('drywall-waste').checked?0.10:0;
+  var totalArea=areaSqM*(1+waste);
+  var sheetSize=parseFloat($('drywall-sheet').value);
+  var sheets=Math.ceil(totalArea/sheetSize);
+
+  // Screws: ~28 per sheet (industry standard)
+  var screws=sheets*28;
+  // Joint compound: ~0.34 kg per m^2 (one coat finish)
+  var compound=round(totalArea*0.34,1);
+  // Joint tape: ~1.2 m per m^2
+  var tape=round(totalArea*1.2,1);
+
+  var wasteNote=waste>0?'<span>Waste allowance: +10% ('+escapeHtml(round(areaSqM*waste,2))+' m\u00B2)</span>':'';
+  var inputSummary=isRoom?escapeHtml(round(toMeters(requirePositive('drywall-length'),$('drywall-unit').value),2))+'x'+escapeHtml(round(toMeters(requirePositive('drywall-width'),$('drywall-unit').value),2))+'x'+escapeHtml(round(toMeters(requirePositive('drywall-height'),$('drywall-unit').value),2))+' m':escapeHtml(round(areaSqM,2))+' m\u00B2';
+
+  showResult('result-drywall',
+    escapeHtml(sheets)+' sheets',
+    '<span>Wall area: '+escapeHtml(round(areaSqM,2))+' m\u00B2 ('+escapeHtml(round(areaSqM*10.7639,1))+' sq.ft)</span>'+
+    wasteNote+
+    '<span>Total area (incl. waste): '+escapeHtml(round(totalArea,2))+' m\u00B2</span>'+
+    '<span>Sheets: '+escapeHtml(sheets)+' ('+escapeHtml(sheetSize)+' m\u00B2 each)</span>'+
+    '<span>Screws needed: ~'+escapeHtml(screws)+'</span>'+
+    '<span>Joint compound: ~'+escapeHtml(compound)+' kg</span>'+
+    '<span>Joint tape: ~'+escapeHtml(tape)+' m</span>'
+  );
+  lastDrywallResult={sheets:sheets,screws:screws,compound:compound,tape:tape,area:round(totalArea,2)};
+  showCost('drywall',sheets,'drywall-price');
+  addHistory({calculator_type:'drywall',inputs_summary:inputSummary,result:sheets+' sheets, '+screws+' screws',fields:isRoom?{'drywall-length':requirePositive('drywall-length'),'drywall-width':requirePositive('drywall-width'),'drywall-height':requirePositive('drywall-height'),'drywall-unit':unit,'drywall-mode':true}:{'drywall-area':requirePositive('drywall-area'),'drywall-unit':unit,'drywall-mode':false}});
+  showSaveForm('drywall');
+}
+
 /* === PROJECTS (localStorage) === */
 function getProjects(){return storageGet('projects',[]);}
 function saveProject(proj){
@@ -1945,6 +2114,15 @@ function initProjects(){
     $('save-form-concrete').classList.remove('visible');
     $('save-concrete-name').value='';
   });
+
+  // Save drywall project
+  $('save-drywall-btn').addEventListener('click',function(){
+    if(!lastDrywallResult){showToast('Calculate first');return;}
+    var name=$('save-drywall-name').value.trim()||'Drywall Calculation';
+    saveProject({name:name,type:'Drywall',summary:lastDrywallResult.sheets+' sheets, '+lastDrywallResult.screws+' screws'});
+    $('save-form-drywall').classList.remove('visible');
+    $('save-drywall-name').value='';
+  });
 }
 
 /* === COPY RESULT === */
@@ -1983,7 +2161,7 @@ function initCopyButtons(){
 /* === CALCULATION HISTORY === */
 var HISTORY_KEY='bc_history';
 var HISTORY_MAX=15;
-var historyIcons={area:'\uD83D\uDCD0',tile:'\uD83E\uDDF1',paint:'\uD83E\uDEA3',floor:'\uD83E\uDEB5',concrete:'\uD83E\uDDF1'};
+var historyIcons={area:'\uD83D\uDCD0',tile:'\uD83E\uDDF1',paint:'\uD83E\uDEA3',floor:'\uD83E\uDEB5',concrete:'\uD83E\uDDF1',drywall:'\uD83E\uDDF1'};
 
 function getHistory(){
   try{var v=localStorage.getItem(HISTORY_KEY);return v?JSON.parse(v):[];}
@@ -2222,6 +2400,13 @@ function initShopping(){
   $('add-shopping-concrete').addEventListener('click',function(){
     if(!lastConcreteResult)return;
     addShoppingItem('Concrete bags ('+lastConcreteResult.volume+' m\u00B3)',lastConcreteResult.bags,'bag'+(lastConcreteResult.bags>1?'s':''));
+  });
+  $('add-shopping-drywall').addEventListener('click',function(){
+    if(!lastDrywallResult)return;
+    addShoppingItem('Drywall sheets ('+lastDrywallResult.area+' m\u00B2)',lastDrywallResult.sheets,'sheet'+(lastDrywallResult.sheets>1?'s':''));
+    addShoppingItem('Drywall screws',lastDrywallResult.screws,'pcs');
+    addShoppingItem('Joint compound',lastDrywallResult.compound,'kg');
+    addShoppingItem('Joint tape',lastDrywallResult.tape,'m');
     animateAddBtn(this);
   });
 }
@@ -2240,7 +2425,7 @@ function initMeasureGuide(){
 }
 
 /* === UNIT PREFERENCES === */
-var unitSelectIds=['area-unit','area-l-unit','tile-unit','paint-unit','floor-unit','conc-unit'];
+var unitSelectIds=['area-unit','area-l-unit','tile-unit','paint-unit','floor-unit','conc-unit','drywall-unit'];
 function saveUnitPreference(id,val){
   storageSet('unit_'+id,val);
 }
@@ -2354,7 +2539,7 @@ function initAutoSave(){
 }
 
 /* === KEYBOARD SHORTCUTS (v7) === */
-var tabKeys={1:'area',2:'tile',3:'paint',4:'floor',5:'concrete',6:'convert'};
+var tabKeys={1:'area',2:'tile',3:'paint',4:'floor',5:'concrete',6:'convert',7:'drywall'};
 
 function initKeyboardShortcuts(){
   document.addEventListener('keydown',function(e){
@@ -2692,7 +2877,8 @@ function initUndo(){
     {calc:'calc-tile',section:'section-tile',undo:'undo-tile',result:'result-tile'},
     {calc:'calc-paint',section:'section-paint',undo:'undo-paint',result:'result-paint'},
     {calc:'calc-floor',section:'section-floor',undo:'undo-floor',result:'result-floor'},
-    {calc:'calc-concrete',section:'section-concrete',undo:'undo-concrete',result:'result-concrete'}
+    {calc:'calc-concrete',section:'section-concrete',undo:'undo-concrete',result:'result-concrete'},
+    {calc:'calc-drywall',section:'section-drywall',undo:'undo-drywall',result:'result-drywall'}
   ];
 
   calcButtons.forEach(function(cfg){
@@ -2729,6 +2915,7 @@ function init(){
   initFloor();
   initConcrete();
   initConvert();
+  initDrywall();
   initProjects();
   initHistory();
   initShopping();
