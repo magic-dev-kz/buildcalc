@@ -1,6 +1,13 @@
 # Changelog
 
 
+
+## v24.0 (2026-03-29) — JSON-LD Structured Data
+
+- **JSON-LD structured data**: Added WebApplication schema markup in `<head>` for improved SEO and rich search results
+- SW cache bumped to `buildcalc-v24.0`
+
+---
 ## v23.0 (2026-03-29) — Deferred Font Loading
 
 - **Non-blocking Google Fonts**: Replaced render-blocking `@import` in inline CSS with `<link rel="preload" ... onload>` and `<noscript>` fallback — font CSS no longer blocks first paint
