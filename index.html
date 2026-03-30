@@ -2948,7 +2948,6 @@ function init(){
   initConvert();
   initDrywall();
   initProjects();
-  initHistory();
   initShopping();
   initMeasureGuide();
   initFieldErrorClear();
@@ -2957,12 +2956,8 @@ function init(){
   initUnitPreferences();
   initAutoSave();
   initKeyboardShortcuts();
-  initPWAInstall();
-  initMaterialLookup();
-  initPrintReport();
   initRoomPresets();
   initProjectTotal();
-  initShareProject();
   $('btn-theme').addEventListener('click',toggleTheme);
 
   // v9: Share on Twitter/X
@@ -3001,15 +2996,27 @@ function init(){
     }
   });
 
-  // v10: Print tip toast on first visit
-  if(!storageGet('print_tip_shown',false)){
-    setTimeout(function(){showToast('Tip: Save as PDF for digital sharing');storageSet('print_tip_shown',true);},3000);
-  }
-
-  // Register Service Worker
-  if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('./sw.js').catch(function(){/* SW registration failed */});
-  }
+  // v26: Defer non-critical features to not block first paint
+  var _deferInit = function(fn) {
+    if ('requestIdleCallback' in window) { requestIdleCallback(fn); }
+    else { setTimeout(fn, 100); }
+  };
+  _deferInit(function() { initHistory(); });
+  _deferInit(function() { initPWAInstall(); });
+  _deferInit(function() { initMaterialLookup(); });
+  _deferInit(function() { initPrintReport(); });
+  _deferInit(function() { initShareProject(); });
+  _deferInit(function() {
+    // v10: Print tip toast on first visit
+    if(!storageGet('print_tip_shown',false)){
+      setTimeout(function(){showToast('Tip: Save as PDF for digital sharing');storageSet('print_tip_shown',true);},3000);
+    }
+  });
+  _deferInit(function() {
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.register('./sw.js').catch(function(){/* SW registration failed */});
+    }
+  });
 }
 
 if(document.readyState==='loading'){
