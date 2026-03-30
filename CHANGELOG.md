@@ -1,5 +1,10 @@
 # Changelog
 
+## v20.0 (2026-03-29) — Print Styles Verified
+
+- **Print verification**: Existing `@media print` rules confirmed working — hides nav, buttons, overlays; shows calculator results with cost estimates; report header prints with branding; page breaks on cards
+- SW cache bumped to `buildcalc-v20.0`
+
 ## v19.0 (2026-03-29) — Error Handling Hardening
 
 - **NaN guard**: If any calculator result is NaN, show "Invalid input" instead of broken output
