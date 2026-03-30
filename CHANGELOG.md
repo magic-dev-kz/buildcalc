@@ -1,5 +1,10 @@
 # Changelog
 
+## v19.0 (2026-03-29) — Error Handling Hardening
+
+- **NaN guard**: If any calculator result is NaN, show "Invalid input" instead of broken output
+- SW cache bumped to `buildcalc-v19.0`
+
 ## v18.0 (2026-03-29) — SEO / Meta Pass
 
 - **robots meta**: Added `<meta name="robots" content="index, follow">`

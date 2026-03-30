@@ -1239,6 +1239,13 @@ function focusFirstError(ids){
 
 // IMPORTANT: detail param must be pre-escaped via escapeHtml()
 function showResult(id,value,detail){
+  // v19: NaN guard
+  if(typeof value==='string'&&value.indexOf('NaN')!==-1||typeof value==='number'&&isNaN(value)){
+    var el=$(id);el.classList.add('visible');
+    $(id+'-value').textContent='Invalid input';
+    $(id+'-detail').innerHTML='<span style="color:var(--error)">Please check your numbers and try again.</span>';
+    return;
+  }
   var el=$(id);
   el.classList.add('visible');
   $(id+'-detail').innerHTML=detail||'';
